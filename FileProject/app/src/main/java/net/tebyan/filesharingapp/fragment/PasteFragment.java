@@ -28,7 +28,7 @@ import net.tebyan.filesharingapp.model.GetFileModel_;
 /**
  * Created by v.karimi on 5/3/2016.
  */
-public class PasteFragment extends Fragment implements MainActivity.RefreshDirectory, MainActivity.PasteConfirm,MainActivity.CutConfirm {
+public class PasteFragment extends Fragment implements MainActivity.RefreshDirectory, MainActivity.PasteConfirm, MainActivity.CutConfirm {
 
     public View view;
     public ContextMenuRecyclerView rv;
@@ -113,12 +113,12 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                     Boolean isHeader = true;
                                     final GetFileModel_ data = new GetFileModel_();
                                     if (result.Data.Files.get(0).IsFolder) {
-                                        data.Data.Files.add(new FileData(getString(R.string.folder), true));
+                                        data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
                                     }
                                     for (int i = 0; i < result.Data.Files.size(); i++) {
 
                                         if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
-                                            data.Data.Files.add(new FileData(getString(R.string.file), true));
+                                            data.Data.Files.add(new FileData(getString(R.string.file), true, false));
                                             headerPos = i + 1;
                                             isHeader = false;
                                         }
@@ -154,10 +154,10 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
                                 handler.dismissPasteDialog();
-                               // if (result.get("Error").equals("null")) {
-                                    Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
-                               //} else {
-                                    //Toast.makeText(activity, "paste error", Toast.LENGTH_SHORT).show();
+                                // if (result.get("Error").equals("null")) {
+                                Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
+                                //} else {
+                                //Toast.makeText(activity, "paste error", Toast.LENGTH_SHORT).show();
 
                                 //}
                             }

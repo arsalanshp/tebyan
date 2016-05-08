@@ -75,6 +75,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void setHandler(MainActivity.SelectedItems handler) {
         this.selectHandler = handler;
     }
+
     public void setDeSelectHandler(MainActivity.deSelectedItems handler) {
         this.deSelectHandler = handler;
     }
@@ -118,7 +119,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     public void setAdapter(int type) {
-        adapter = new FolderAdapter(getActivity(), data, changeView,type);
+        adapter = new FolderAdapter(getActivity(), data, changeView, type);
         adapter.setHandler(this);
         adapter.setRefreshHandler(this);
         isTablet(activity);
@@ -209,42 +210,35 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 break;
             }
             case R.id.select_all_menu: {
-                if(isPressed) {
+                if (isPressed) {
                     selectHandler.getAllItems();
                     adapter.notifyDataSetChanged();
                     item.setTitle(getString(R.string.clear_selection));
-                }else{
+                } else {
                     deSelectHandler.clearAllItems();
                     adapter.notifyDataSetChanged();
                     item.setTitle(getString(R.string.select_all));
                 }
-                isPressed=!isPressed;
+                isPressed = !isPressed;
                 break;
             }
             case R.id.action_change_view: {
                 changeView = !changeView;
                 adapter.changeView = !adapter.changeView;
                 getActivity().supportInvalidateOptionsMenu();
+                rv.setHasFixedSize(true);
                 if (adapter.changeView) {
-                    rv.setHasFixedSize(true);
                     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    adapter.notifyDataSetChanged();
-                    rv.setAdapter(adapter);
-
                 } else {
+                    setSpan(adapter.data);
                     if (isTablet(getActivity())) {
-                        setSpan(adapter.data);
-                        rv.setHasFixedSize(true);
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-                        rv.setAdapter(adapter);
                     } else {
-                        setSpan(adapter.data);
-                        rv.setHasFixedSize(true);
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                        rv.setAdapter(adapter);
                     }
                     item.setIcon(R.drawable.grid_1);
                 }
+                adapter.notifyDataSetChanged();
             }
         }
 
@@ -320,12 +314,12 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         Boolean isHeader = true;
         final GetFileModel_ data = new GetFileModel_();
         if (result.Data.Files.get(0).IsFolder) {
-            data.Data.Files.add(new FileData(getString(R.string.folder), true));
+            data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
         }
         for (int i = 0; i < result.Data.Files.size(); i++) {
 
             if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
-                data.Data.Files.add(new FileData(getString(R.string.file), true));
+                data.Data.Files.add(new FileData(getString(R.string.file), true, false));
                 headerPos = i + 1;
                 isHeader = false;
             }
@@ -355,17 +349,18 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     @Override
-    public void showContextMenu(String fileIds, String fileNames,int type) {
+    public void showContextMenu(String fileIds, String fileNames, int type) {
         BottomSheetDialogFragment bottomSheetDialogFragment;
         Bundle bundle = new Bundle();
         bundle.putString("index", fileIds);
         bundle.putString("fileNames", fileNames);
-        if(type==0){
-            bottomSheetDialogFragment=new MenuFragment();
+        if (type == 0) {
+            bottomSheetDialogFragment = new MenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "menuFragment");
-        } if(type==2){
-            bottomSheetDialogFragment=new DeleteMenuFragment();
+        }
+        if (type == 2) {
+            bottomSheetDialogFragment = new DeleteMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "deleteMenuFragment");
         }
@@ -426,9 +421,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                     Application.ParrentFolder = "";
                                 else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                    data = result;
-                                    adapter.data = result;
-                                    adapter.notifyDataSetChanged();
+                                data = result;
+                                adapter.data = result;
+                                adapter.notifyDataSetChanged();
 
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
@@ -437,6 +432,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         } else
             Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
+
     public void getStaredFiles() {
         if (Utils.isOnline(getActivity())) {
             /*progress_bar.setVisibility(View.VISIBLE);*/

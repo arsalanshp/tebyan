@@ -17,17 +17,20 @@ public class FileData {
     public String MonthStr;
     public String SharedBy;
     public String FileContent;
-    public boolean isHeader=false;
+    public boolean isHeader = false;
     public boolean Deleted;
     public boolean IsFolder;
     public boolean CandEdit;
     public int PublicStatus;
-    public FileData(String title,boolean isHeader){
-        Title=title;
-        this.isHeader=isHeader;
+
+    public FileData(String title, boolean isHeader, boolean isFolder) {
+        Title = title;
+        this.isHeader = isHeader;
+        this.IsFolder = isFolder;
     }
-    public FileData(){
-        isHeader=false;
+
+    public FileData() {
+        isHeader = false;
 
     }
 }
