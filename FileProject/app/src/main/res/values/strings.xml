@@ -1,0 +1,125 @@
+<resources>
+    <string name="app_name">گنجینه فایل کاربران</string>
+
+    <string name="email">ایمیل</string>
+    <string name="password">رمز عبور</string>
+    <string name="new_folder">اضافه کردن پوشه جدید</string>
+    <string name="action_settings">تنظیمات</string>
+    <string name="search">جستجو</string>
+    <string name="sending">در حال ارسال ...</string>
+    <string name="plz_wait"> لطفا کمی صبر کنید</string>
+
+    <string name="name">نام</string>
+    <string name="title_activity_login">ورود</string>
+    <string name="title_activity_signup">ثبت نام</string>
+    <string name="no_account_yet">کاربر مهمان</string>
+    <string name="account">نمایه</string>
+    <string name="already_a_member">قبلا ثبت نام کرده اید؟</string>
+    <string name="create_account">ایجاد حساب کاربری</string>
+    <string name="enter_valid_phone"> لطفا شماره معتبری را وارد کنید</string>
+    <string name="wrong_pass">    رمز عبور می بایست بین چهار تا ده کاراکتر باشد</string>
+    <string name="at_least_three">    اقلا سه حرف وارد کنید</string>
+    <string name="phone">شماره همراه</string>
+    <string name="signup">ورود / ثبت نام</string>
+    <string name="confirm">تایید</string>
+    <string name="resend_phone">ارسال مجدد</string>
+    <string name="folder">پوشه</string>
+    <string name="file">فایل</string>
+    <string name="edit_phone">ویرایش شماره</string>
+    <string name="confirmation_code">کد تایید</string>
+    <string name="title_activity_main">خانه</string>
+    <string name="favorite_menu">علاقه مندی ها</string>
+    <string name="exit">خروج</string>
+    <string name="cancel_sharing">قطع اشتراک</string>
+    <string name="downloading">در حال دانلود ...</string>
+    <string name="download">دانلود</string>
+    <string name="delete">حذف</string>
+    <string name="file_is_deleted">فایل حذف شد</string>
+    <string name="deleted">حذف شده ها</string>
+    <string name="favorite">اضافه به علاقه مندی ها</string>
+    <string name="rename">تغییر نام</string>
+    <string name="move">جابجا کردن</string>
+    <string name="zip">فشرده سازی</string>
+    <string name="copy">کپی</string>
+    <string name="share_link">اشتراک لینک</string>
+    <string name="share_file">اشتراک فایل</string>
+
+    <string name="cut">برش</string>
+    <string name="paste">چسباندن</string>
+    <string name="_public">عمومی</string>
+    <string name="_private">خصوصی</string>
+    <string name="access">دسترسی</string>
+    <string name="sharedBy">اشتراک گذاشته توسط </string>
+
+    <string name="info">اطلاعات</string>
+    <string name="open">باز کن</string>
+
+    <string name="remove_backup">حذف کردن</string>
+    <string name="restore_backup">بازیابی</string>
+    <string name="sort">مرتب سازی</string>
+    <string name="select">انتخاب...</string>
+    <string name="clear_selection">پاک کردن</string>
+    <string name="select_all">انتخاب همه</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="username">نام کاربری</string>
+    <string name="network_connection_fail">خطا در برقراری ارتباط</string>
+    <string name="share"> اشتراک</string>
+    <string name="field_is_empty"> پر کردن این فیلد الزامی است</string>
+    <string name="add_friend"> اضافه کردن دوست</string>
+    <string name="added"> اضافه شد!</string>
+    <string name="edited"> تفییر داده شد!</string>
+    <string name="sharePeople"> اشتراک با دیگران</string>
+    <string name="shared"> اشتراک با من</string>
+    <string name="share_">اشتراک در شبکه های دیگر</string>
+    <string name="upgrade"> ارتقا حافظه</string>
+    <string name="used"> استفاده شده است</string>
+    <string name="remained">حافظه باقی مانده</string>
+    <string name="select_file_type">انتخاب نوع فایل</string>
+    <string name="new_item">جدید</string>
+    <string name="nnf_name">نام</string>
+    <string name="nnf_new_folder">پوشه جدید</string>
+    <string name="ok">تایید</string>
+
+    <string name="number">شماره</string>
+    <string name="firstName">نام</string>
+    <string name="lastName">نام خانوادگی</string>
+
+    <string name="contacts">مخاطبان</string>
+    <string name="close">بستن</string>
+    <string name="cancel">لغو</string>
+    <string name="recent_photos">آخرین عکس ها</string>
+    <string name="rotate_image">چرخش</string>
+    <string name="select_image">انتخاب عکس</string>
+    <string name="max_img_limit_reached">بیشتر از %d عکس نمی توانید انتخاب کنید</string>
+    <string name="preview">نمایش</string>
+    <string name="copy_not_possible">کپی فولدر امکان پذیر نیست</string>
+    <string name="cut_not_possible">کات کردن فولدر امکان پذیر نیست</string>
+    <string name="back">بازگشت</string>
+    <string name="paste_not_possible">پیست فایل امکان پذیر نیست</string>
+    <string name="taking_pictures">دوربین</string>
+    <string name="pasted">فایل پیست شد</string>
+    <string name="copied">فایل کپی شد</string>
+    <string name="moved">فایل کات شد</string>
+    <string name="renamed">تغییر نام اعمال شد</string>
+    <string name="uploading">در حال بارگذاری فایل</string>
+    <string name="upload_image">عکس</string>
+    <string name="upload">آپلود</string>
+    <string name="upload_completed">بارگذاری تکمیل شد</string>
+    <string name="paste_dialog_header">انتخاب مقصد</string>
+    <string name="nnf_permission_external_write_denied">دسترسی به فایل های سیستمی وجود ندارد</string>
+    <string name="nnf_select_something_first">لطفا یک آیتم را انتخاب کنید</string>
+    <string name="nnf_create_folder_error">خطا در ایجاد فولدر</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_profile">نمایه</string>
+    <string name="sort_by_name">براساس نام</string>
+    <string name="sort_by_createdate">براساس تاریخ ایجاد</string>
+</resources>

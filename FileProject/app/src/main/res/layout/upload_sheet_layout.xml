@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#eaeaea"
+    android:layout_weight="3"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="7dp"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/img_upload_file"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_file_upload_white_48dp"
+            android:background="@drawable/dialog_button_background_darker_indigo"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_margin="5dp"
+            android:text="@string/upload"/>
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="7dp"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/img_upload_film"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_add_a_photo_white_48dp"
+            android:background="@drawable/dialog_button_background_darker_orange" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_margin="5dp"
+            android:text="@string/upload_image"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="7dp"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/img_new_folder"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_create_new_folder_white_48dp"
+            android:background="@drawable/dialog_button_background_darker_green" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_margin="5dp"
+            android:text="@string/folder"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,282 @@
+package net.tebyan.filesharingapp.activities;
+
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.tuenti.smsradar.Sms;
+import com.tuenti.smsradar.SmsListener;
+import com.tuenti.smsradar.SmsRadar;
+
+import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.classes.Utils;
+import net.tebyan.filesharingapp.classes.WebserviceUrl;
+
+
+public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
+    SharedPreferences prefs;
+    String phone;
+    EditText _phone;
+    Button _btn_confirm;
+    Button _btn_resend_phone;
+    Button _btn_edit_phone;
+    EditText _insertCode;
+    Button _loginButton;
+    LinearLayout _linear1;
+    LinearLayout _linear2;
+    Toolbar _toolbar;
+    String _token;
+    ProgressBar _progressBar;
+    ProgressDialog builder;
+    Activity activity;
+
+    public void initialize() {
+        _phone = (EditText) findViewById(R.id.input_mobile);
+        _loginButton = (Button) findViewById(R.id.btn_login);
+        _linear1 = (LinearLayout) findViewById(R.id.linear1);
+        _linear2 = (LinearLayout) findViewById(R.id.linear2);
+        _btn_confirm = (Button) findViewById(R.id.btn_confirm);
+        _btn_resend_phone = (Button) findViewById(R.id.btn_resend_phone);
+        _btn_edit_phone = (Button) findViewById(R.id.btn_edit_phone);
+        _insertCode = (EditText) findViewById(R.id.insertCode);
+        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    private void initToolbar() {
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(_toolbar);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        activity = this;
+        forceRTLIfSupported();
+        initToolbar();
+        initialize();
+
+        _loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
+
+
+        _btn_resend_phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgressDialog();
+                sendLoginCode();
+            }
+        });
+
+        _btn_edit_phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _loginButton.setEnabled(true);
+                _linear1.setVisibility(View.VISIBLE);
+                _linear2.setVisibility(View.GONE);
+            }
+        });
+
+        _btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgressDialog();
+                getTokenByVCode();
+            }
+        });
+
+        prefs = this.getSharedPreferences(
+                "net.tebyan.filesharingapp.activities", Context.MODE_PRIVATE);
+        _token = prefs.getString("TOKEN", "null");
+        if (!_token.equals("null")) {
+            goToMainActivity();
+        }
+    }
+
+    public void login() {
+        if (!validate()) {
+            onLoginFailed();
+            return;
+        } else {
+            //_loginButton.setEnabled(false);
+            //_progressBar.setVisibility(View.VISIBLE);
+            showProgressDialog();
+            phone = _phone.getText().toString();
+            new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            sendLoginCode();
+                        }
+                    }, 3000);
+        }
+    }
+
+    public void showProgressDialog() {
+        builder = new ProgressDialog(this);
+        builder.setTitle(R.string.plz_wait);
+        builder.setMessage(getString(R.string.sending));
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // disable going back to the MainActivity
+        moveTaskToBack(true);
+    }
+
+    public void sendLoginCode() {
+        initializeSmsRadarService();
+        if (Utils.isOnline(this)) {
+            Ion.with(this)
+                    .load(WebserviceUrl.SendLoginCode + phone).setTimeout(1000000000)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            if (result != null && e == null && result.get("Data").toString().equals("true")) {
+                                onLoginSuccess();
+                            } else {
+                                onLoginFailed();
+                            }
+                        }
+                    });
+        } else
+            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initializeSmsRadarService() {
+        SmsRadar.initializeSmsRadarService(LoginActivity.this, new SmsListener() {
+            @Override
+            public void onSmsSent(Sms sms) {
+
+            }
+
+            @Override
+            public void onSmsReceived(Sms sms) {
+                if (sms.getAddress().contains("8130114114")) {
+                    String activationCode = sms.getMsg();
+                    _insertCode.setText(activationCode);
+                    // checkActivationCode(activationCode);
+                } else {
+                    // other sms
+                }
+                stopSmsRadarService();
+            }
+
+        });
+    }
+
+    private void stopSmsRadarService() {
+        SmsRadar.stopSmsRadarService(this);
+    }
+
+    public void getTokenByVCode() {
+        if (Utils.isOnline(this)) {
+            Ion.with(this)
+                    .load(WebserviceUrl.GetTokenByVCode + phone + "&code=" + _insertCode.getText().toString())
+                    .setTimeout(1000000000)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            if (result != null && e == null) {
+                                _token = result.get("Data").toString();
+                                //Toast.makeText(getBaseContext(), "Token:" + _token, Toast.LENGTH_SHORT).show();
+                                prefs.edit().putString("TOKEN", _token).commit();
+                                prefs.edit().putString("PHONE", phone).commit();
+                                registerDevice(Utils.getDeviceId(activity), _token.substring(1, _token.length() - 1));
+                            } else {
+                                onLoginFailed();
+                            }
+                        }
+                    });
+        } else
+            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public void registerDevice(String deviceId, String _token) {
+        JsonObject json = new JsonObject();
+        json.addProperty("deviceId", deviceId);
+        if (Utils.isOnline(this)) {
+            Ion.with(this)
+                    .load(WebserviceUrl.RegisterDevice + deviceId).setTimeout(1000000000)
+                    .setHeader("userToken", _token)
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            if (result != null && e == null) {
+                                //Toast.makeText(getBaseContext(), "Success!", Toast.LENGTH_SHORT).show();
+                                builder.cancel();
+                                goToMainActivity();
+                            } else {
+                                //Toast.makeText(getBaseContext(), "failed!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else
+            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public void goToMainActivity() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void onLoginSuccess() {
+        _linear1.setVisibility(View.GONE);
+        _linear2.setVisibility(View.VISIBLE);
+        builder.cancel();
+        _progressBar.setVisibility(View.GONE);
+    }
+
+    public void onLoginFailed() {
+        if (builder != null)
+            builder.cancel();
+        //Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+        String phone = _phone.getText().toString();
+        if (phone.isEmpty() || /*|| !Patterns.PHONE.matcher(phone).matches()*/ !phone.startsWith("09") || phone.length() != 11) {
+            _phone.setError(getString(R.string.enter_valid_phone));
+            valid = false;
+        } else {
+            _phone.setError(null);
+        }
+        return valid;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void forceRTLIfSupported() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        }
+    }
+}

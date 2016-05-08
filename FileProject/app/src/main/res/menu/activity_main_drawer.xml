@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/title_activity_main" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings"
+            android:visible="false"/>
+        <item
+            android:id="@+id/shared"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/shared" />
+        <item
+            android:id="@+id/nav_favorite"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/favorite_menu" />
+        <item
+            android:id="@+id/deleted"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="@string/deleted" />
+        <item
+            android:id="@+id/exit"
+            android:icon="@drawable/ic_exit_to_app_white_24dp"
+            android:title="@string/exit" />
+    </group>
+
+    <item android:title="@string/remained">
+        <menu>
+            <item
+                android:id="@+id/nav_upgrade"
+                android:title="@string/remained" />
+            <item
+                android:id="@+id/nav_upgrade_web"
+                android:title="@string/upgrade" />
+        </menu>
+    </item>
+
+
+</menu>

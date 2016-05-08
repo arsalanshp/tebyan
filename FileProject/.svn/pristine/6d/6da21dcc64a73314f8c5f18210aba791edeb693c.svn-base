@@ -1,0 +1,369 @@
+/*
+ * Copyright (c) 2015 Jonas Kalderstam
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.tebyan.filesharingapp.classes;
+
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import net.tebyan.filesharingapp.R;
+
+public abstract class NewItemFragment extends DialogFragment {
+
+    int type = 0;
+    AlertDialog dialog;
+    Activity activity;
+    String currentFileID;
+    int PublicStatus;
+    TextView fileLocation;
+    TextView fileSize;
+    TextView fileDate;
+    TextView sharedBy;
+    String text;
+    private OnNewFolderListener listener = null;
+
+    public NewItemFragment() {
+        super();
+    }
+
+    public void setListener(final OnNewFolderListener listener, int type, Activity activity) {
+        this.listener = listener;
+        this.type = type;
+        this.activity = activity;
+    }
+
+    public void setListener(final OnNewFolderListener listener, int type, Activity activity, String currentFileID,String text) {
+        this.listener = listener;
+        this.type = type;
+        this.activity = activity;
+        this.currentFileID = currentFileID;
+        this.text=text;
+    }
+
+    public void setListener(final OnNewFolderListener listener, int type, Activity activity, String currentFileID, int PublicStatus) {
+        this.listener = listener;
+        this.type = type;
+        this.activity = activity;
+        this.currentFileID = currentFileID;
+        this.PublicStatus = PublicStatus;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if (type == 0) {
+            builder.setView(R.layout.nnf_dialog_folder_name)
+                    .setTitle(Html.fromHtml("<font color='#FFFFFF'>" + getString(R.string.nnf_new_folder) + "</font>"))
+                    .setNegativeButton(R.string.cancel,
+                            null)
+                    .setPositiveButton(R.string.ok,
+                            null);
+
+            dialog = builder.create();
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog1) {
+                    final AlertDialog dialog = (AlertDialog) dialog1;
+                    final EditText editText = (EditText) dialog.findViewById(R.id.edit_text);
+                    if(text!=null) {
+                        editText.setText(text);
+                    }
+                    Button cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    final Button ok = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    // Start disabled
+                    ok.setEnabled(false);
+                    ok.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            String itemName = editText.getText().toString();
+                            if (validateName(itemName)) {
+                               /* if (listener != null) {
+                                    listener.onNewFolder(itemName);
+                                }*/
+                                Utils.onNewFolder(itemName, (FragmentActivity) activity);
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(final CharSequence s, final int start,
+                                                      final int count, final int after) {
+                        }
+
+                        @Override
+                        public void onTextChanged(final CharSequence s, final int start,
+                                                  final int before, final int count) {
+                        }
+
+                        @Override
+                        public void afterTextChanged(final Editable s) {
+                            ok.setEnabled(validateName(s.toString()));
+                        }
+                    });
+                }
+            });
+
+        } else if (type == 1) {
+            builder.setView(R.layout.nnf_dialog_folder_name)
+                    .setTitle(Html.fromHtml("<font color='#FFFFFF'>" + getString(R.string.rename) + "</font>"))
+                    .setNegativeButton(R.string.cancel,
+                            null)
+                    .setPositiveButton(R.string.ok,
+                            null);
+
+            dialog = builder.create();
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog1) {
+                    final AlertDialog dialog = (AlertDialog) dialog1;
+                    final EditText editText = (EditText) dialog.findViewById(R.id.edit_text);
+                    if(text!=null){
+                        editText.setText(text);
+                    }
+                    Button cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    final Button ok = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    // Start disabled
+                    ok.setEnabled(false);
+                    ok.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            String itemName = editText.getText().toString();
+                            if (validateName(itemName)) {
+                                Utils.rename_File(currentFileID, itemName, (FragmentActivity) activity);
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(final CharSequence s, final int start,
+                                                      final int count, final int after) {
+                        }
+
+                        @Override
+                        public void onTextChanged(final CharSequence s, final int start,
+                                                  final int before, final int count) {
+                        }
+
+                        @Override
+                        public void afterTextChanged(final Editable s) {
+                            ok.setEnabled(validateName(s.toString()));
+                        }
+                    });
+                }
+            });
+        } else if (type == 2) {
+            builder.setView(R.layout.dialog_information)
+                    .setTitle(Html.fromHtml("<font color='#FFFFFF'>" + getString(R.string.info) + "</font>"))
+                    .setNegativeButton(R.string.close,
+                            null);
+            dialog = builder.create();
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog1) {
+                    final AlertDialog dialog = (AlertDialog) dialog1;
+                    fileLocation = (TextView) dialog.findViewById(R.id.fileLocation);
+                    fileSize = (TextView) dialog.findViewById(R.id.fileSize);
+                    fileDate = (TextView) dialog.findViewById(R.id.fileDate);
+                    sharedBy = (TextView) dialog.findViewById(R.id.sharedBy);
+                    getFileInfo(currentFileID);
+                    Button cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+                }
+            });
+        } else if (type == 3) {
+            builder.setView(R.layout.dialog_access)
+                    .setTitle(Html.fromHtml("<font color='#FFFFFF'>" + getString(R.string.share) + "</font>"))
+                    .setNegativeButton(R.string.close,
+                            null);
+            dialog = builder.create();
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog1) {
+                    final AlertDialog dialog = (AlertDialog) dialog1;
+                    final RadioButton radioButtonPublic = (RadioButton) dialog.findViewById(R.id.radioButtonPublic);
+                    final RadioButton radioButtonPrivate = (RadioButton) dialog.findViewById(R.id.radioButtonPrivate);
+                    if (PublicStatus == 0)
+                        radioButtonPublic.setChecked(true);
+                    else radioButtonPrivate.setChecked(true);
+                    Button cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+                    radioButtonPublic.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Utils.setFilePublic(activity, "false", "0", currentFileID);
+                            dialog.cancel();
+                        }
+                    });
+                    radioButtonPrivate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Utils.setFilePrivate(activity, "false", "1", currentFileID);
+                            dialog.cancel();
+                        }
+                    });
+                }
+            });
+        } else if (type == 4) {
+            builder.setView(R.layout.dialog_add_friend)
+                    .setTitle(Html.fromHtml("<font color='#FFFFFF'>" + getString(R.string.add_friend) + "</font>"))
+                    .setNegativeButton(R.string.cancel,
+                            null).setPositiveButton(R.string.ok,
+                    null);
+            dialog = builder.create();
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog1) {
+                    final AlertDialog dialog = (AlertDialog) dialog1;
+                    final EditText number = (EditText) dialog.findViewById(R.id.number);
+                    final EditText firstName = (EditText) dialog.findViewById(R.id.firstName);
+                    final EditText lastName = (EditText) dialog.findViewById(R.id.lastName);
+
+                    Button cancel = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    Button ok = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //dialog.dismiss();
+                            if (number.getText().toString().equals(""))
+                                number.setError("error!");
+                            else if (firstName.getText().toString().equals(""))
+                                firstName.setError("error!");
+                            else if (lastName.getText().toString().equals(""))
+                                lastName.setError("error!");
+                            else {
+                                Utils.addFriend(firstName.getText().toString(), lastName.getText().toString(), number.getText().toString(), activity);
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        //Utils.reloadMainActivity(Application.CurrentFolder, activity);
+        return dialog;
+    }
+
+    public void getFileInfo(String fileID) {
+        if (Utils.isOnline(activity)) {
+            //progress_bar.setVisibility(View.VISIBLE);
+            Ion.with(this)
+                    .load(WebserviceUrl.GetFileInfo + fileID)
+                    .setTimeout(1000000000)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            // progress_bar.setVisibility(View.GONE);
+                            if (e == null) {
+                                String filename = result.get("Data").getAsJsonObject().get("Title").toString();
+                                String filedate = result.get("Data").getAsJsonObject().get("Createdate").toString();
+                                String filesize = result.get("Data").getAsJsonObject().get("SizeStr").toString();
+                                String sharedby = result.get("Data").getAsJsonObject().get("SharedBy").toString();
+
+                                fileLocation.setText(filename.substring(1, filename.length() - 1));
+                                fileDate.setText(filedate.substring(1, filedate.length() - 1));
+                                fileSize.setText(filesize.substring(1, filesize.length() - 1));
+                                sharedBy.setText(getString(R.string.sharedBy) + sharedby);
+                            }
+                        }
+                    });
+        } else
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+
+    protected abstract boolean validateName(final String itemName);
+
+    public interface OnNewFolderListener {
+        /**
+         * Name is validated to be non-null, non-empty and not containing any
+         * slashes.
+         *
+         * @param name The name of the folder the user wishes to create.
+         */
+        void onNewFolder(final String name);
+    }
+}

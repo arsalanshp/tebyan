@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/download"
+        android:layout_gravity="right"
+        android:title="@string/download"></item>
+
+    <item
+        android:id="@+id/copy"
+        android:title="@string/copy"></item>
+
+    <item
+        android:id="@+id/info"
+        android:title="@string/info"></item>
+    <item
+        android:id="@+id/cancel_sharing"
+        android:title="@string/cancel_sharing"></item>
+</menu>

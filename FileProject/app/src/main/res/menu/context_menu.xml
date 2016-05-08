@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/download"
+        android:layout_gravity="right"
+        android:title="@string/download"></item>
+    <item
+        android:id="@+id/favorite"
+        android:title="@string/favorite"
+        android:visible="false"></item>
+    <item
+        android:id="@+id/rename"
+        android:title="@string/rename"></item>
+    <item
+        android:id="@+id/delete"
+        android:title="@string/delete"
+        ></item>
+    <item
+        android:id="@+id/copy"
+        android:title="@string/copy"></item>
+    <item
+        android:id="@+id/cut"
+        android:title="@string/cut"></item>
+    <item
+        android:id="@+id/paste"
+        android:title="@string/paste"></item>
+    <item
+        android:id="@+id/zip"
+        android:title="@string/zip"></item>
+    <item
+        android:id="@+id/info"
+        android:title="@string/info"></item>
+    <item
+        android:id="@+id/access"
+        android:title="@string/access"></item>
+    <item
+        android:id="@+id/sharePeople"
+        android:title="@string/sharePeople"></item>
+    <item
+        android:id="@+id/shareOtherSocialNetwork"
+        android:title="@string/share_"></item>
+
+</menu>

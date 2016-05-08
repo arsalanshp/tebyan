@@ -1,0 +1,64 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.toolbar.MainActivity">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:menuCategory="alternative"
+        android:orderInCategory="2"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_events"
+        android:icon="@drawable/events"
+        android:menuCategory="alternative"
+        android:orderInCategory="0"
+        android:title="@string/back"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_new_folder"
+        android:icon="@drawable/ic_create_new_folder_white_48dp"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:title="@string/new_folder"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_account"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:title="@string/account"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_add_account"
+        android:icon="@drawable/ic_account_plus"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:title="@string/add_friend"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_paste"
+        android:icon="@drawable/ic_content_paste"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:title="@string/paste"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_back"
+        android:icon="@drawable/ic_arrow_up"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:title="@string/back"
+        app:showAsAction="always" />
+
+
+</menu>

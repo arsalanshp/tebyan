@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#cbcbd2</color>
+    <color name="primary_dark">#b2b2b6</color>
+    <color name="primary_light">#F5F5F5</color>
+    <color name="very_light_accent">#889da7</color>
+    <color name="ligh_accent">#849fac</color>
+    <color name="accent">#cccccc</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#212121</color>
+    <color name="divider">#dddddd</color>
+    <color name="bg">#ff65bbf6</color>
+    <color name="white">#ffffffff</color>
+    <color name="primary_dark_material_light">#ffffff</color>
+    <color name="primary_material_light">#ffffff</color>
+
+    <color name="nnf_dark_separator_color">#ffffff</color>
+    <color name="nnf_light_separator_color">#ffffff</color>
+
+    <color name="indigo">#ffce8fdc</color>
+    <color name="orange">#ffff9900</color>
+    <color name="overlay">#ffffff</color>
+    <color name="red">#ff990000</color>
+    <color name="violet">#ff865fdc</color>
+    <color name="yellow">#ffdccf57</color>
+    <color name="darker_blue">#ff4a59a0</color>
+    <color name="darker_green">#ff4a9544</color>
+    <color name="darker_indigo">#ff8d6399</color>
+    <color name="darker_orange">#ff945e2a</color>
+    <color name="darker_red">#ff97373a</color>
+    <color name="darker_violet">#ff4d3980</color>
+    <color name="darker_yellow">#ffa89b46</color>
+
+</resources>

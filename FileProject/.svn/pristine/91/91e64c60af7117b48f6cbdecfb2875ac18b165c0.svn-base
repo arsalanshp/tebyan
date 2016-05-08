@@ -1,0 +1,116 @@
+package net.tebyan.filesharingapp.adapter;
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.koushikdutta.ion.Ion;
+
+import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.activities.MainActivity;
+import net.tebyan.filesharingapp.classes.Application;
+import net.tebyan.filesharingapp.classes.ContextMenuRecyclerView;
+import net.tebyan.filesharingapp.classes.Utils;
+import net.tebyan.filesharingapp.classes.WebserviceUrl;
+import net.tebyan.filesharingapp.model.FileData;
+import net.tebyan.filesharingapp.model.GetFileModel_;
+
+import java.util.ArrayList;
+
+/**
+ * Created by F.piri on 1/25/2016.
+ */
+
+public class FolderAdapter extends ContextMenuRecyclerView.Adapter<FolderAdapter.CustomViewHolder> {
+    public GetFileModel_ data;
+    Activity activity;
+    ArrayList<FileData> fileSelected;
+
+    public FolderAdapter(Activity context, GetFileModel_ data) {
+        super();
+        activity = context;
+        this.data = data;
+        fileSelected = new ArrayList<>();
+    }
+
+    @Override
+    public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(MainActivity.changeView ? R.layout.list_row_layout :R.layout.list_row, viewGroup,false);
+        CustomViewHolder viewHolder = new CustomViewHolder(view);
+        viewHolder.itemView.setLongClickable(true);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
+        customViewHolder.textView_folder.setText(data.Data.Files.get(i).Title);
+        if (!data.Data.Files.get(i).IsFolder) {
+            Ion.with(customViewHolder.imageView_folder)
+                    .load(WebserviceUrl.SiteUrl + data.Data.Files.get(i).Thumb);
+            customViewHolder.imageView_folder.setPadding(0, 0, 0, 0);
+        } else {
+            customViewHolder.imageView_folder.setImageResource(R.drawable.ic_folder);
+            customViewHolder.imageView_folder.setPadding(20, 20, 20, 20);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return (null != data.Data ? data.Data.Files.size() : 0);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
+    public class CustomViewHolder extends ContextMenuRecyclerView.ViewHolder implements View.OnClickListener {
+        protected TextView textView_folder;
+        protected ImageView imageView_folder;
+        FrameLayout container;
+
+        public CustomViewHolder(View view) {
+            super(view);
+            container = (FrameLayout) itemView.findViewById(R.id.item_layout_container);
+            this.textView_folder = (TextView) view.findViewById(R.id.textView_folder);
+            this.imageView_folder = (ImageView) view.findViewById(R.id.imageView_folder);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (data.Data.Files.get(getLayoutPosition()).IsFolder)
+                Utils.reloadMainActivity(data.Data.Files.get(getLayoutPosition()).FileID, activity);
+            else {
+                if (!fileSelected.contains(data.Data.Files.get(getLayoutPosition()))) {
+                    fileSelected.add(data.Data.Files.get(getLayoutPosition()));
+                    this.container.setBackgroundColor(Color.parseColor("#80000000"));
+                    Log.i("adfasf", Application.fileIdSelected);
+                    Application.fileIdSelected += data.Data.Files.get(getLayoutPosition()).FileID + ",";
+                    Log.i("adfasf",Application.fileIdSelected);
+                } else {
+                    fileSelected.remove(data.Data.Files.get(getLayoutPosition()));
+                    this.container.setBackgroundColor(Color.TRANSPARENT);
+                    String[]array=data.Data.Files.get(getLayoutPosition()).FileID.split(",");
+                    String stringToRemove;
+                    if(array.length==1){
+                        stringToRemove =  data.Data.Files.get(getLayoutPosition()).FileID + ",";
+                        String currentFileIdSelected = Application.fileIdSelected.replace(stringToRemove, "");
+                        Application.fileIdSelected = currentFileIdSelected ;
+                    }else {
+                        stringToRemove = "," + data.Data.Files.get(getLayoutPosition()).FileID + ",";
+                        String currentFileIdSelected = Application.fileIdSelected.replace(stringToRemove, "");
+                        Application.fileIdSelected = currentFileIdSelected+"," ;
+                    }
+
+                }
+            }
+        }
+    }
+}

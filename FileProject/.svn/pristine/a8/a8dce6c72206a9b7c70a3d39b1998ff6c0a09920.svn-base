@@ -1,0 +1,126 @@
+package net.tebyan.filesharingapp.fragment;
+
+import android.app.Fragment;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.adapter.FolderAdapter;
+import net.tebyan.filesharingapp.classes.Application;
+import net.tebyan.filesharingapp.classes.ContextMenuRecyclerView;
+import net.tebyan.filesharingapp.classes.Utils;
+import net.tebyan.filesharingapp.classes.WebserviceUrl;
+import net.tebyan.filesharingapp.model.GetFileModel_;
+
+/**
+ * Created by v.karimi on 4/24/2016.
+ */
+public class HomeFragment extends Fragment {
+
+    public View view;
+    public ContextMenuRecyclerView rv;
+    public FolderAdapter adapter;
+    public ProgressBar progress_bar;
+    public GetFileModel_ data;
+    public String token;
+    public Context context;
+    public int type;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.home_layout, container, false);
+        context = container.getContext();
+        initUI();
+        initData();
+        token = Application.getToken(getActivity());
+        return view;
+    }
+
+    public void initUI() {
+        rv = (ContextMenuRecyclerView) view.findViewById(R.id.rv);
+    }
+
+    public void initData() {
+        data = new GetFileModel_();
+        type = getArguments().getInt("type");
+        switch (type) {
+            case 0: {
+                getFiles();
+                setAdapter();
+                return;
+            }
+        }
+
+
+    }
+
+    public void setAdapter() {
+
+        isTablet(context);
+        adapter = new FolderAdapter(getActivity(), data);
+        if (isTablet(context)) {
+            rv.setHasFixedSize(true);
+            rv.setLayoutManager(new GridLayoutManager(context, 3));
+        } else {
+            rv.setHasFixedSize(true);
+            rv.setLayoutManager(new GridLayoutManager(context, 2));
+        }
+        registerForContextMenu(rv);
+        rv.setAdapter(adapter);
+    }
+
+    public static Boolean isTablet(Context context) {
+
+        if ((context.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE) {
+
+            return true;
+        }
+        return false;
+    }
+
+    public void getFiles() {
+        if (Utils.isOnline(context)) {
+            /*progress_bar.setVisibility(View.VISIBLE);*/
+            Ion.with(this).load(WebserviceUrl.GetFiles + Application.CurrentFolder)
+                    .setHeader("userToken", token)
+                    .as(GetFileModel_.class)
+                    .setCallback(new FutureCallback<GetFileModel_>() {
+                        @Override
+                        public void onCompleted(Exception e, GetFileModel_ result) {
+                            /*progress_bar.setVisibility(View.GONE);*/
+                            if (result != null) {
+                                if (result.Data != null && result.Error == null && e == null) {
+                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
+                                        Application.ParrentFolder = "";
+                                    else
+                                        Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+                                    data = result;
+                                    adapter.data = result;
+                                    adapter.notifyDataSetChanged();
+                                } else
+                                    Toast.makeText(context, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(context, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else
+            Toast.makeText(context, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public interface FragmentListener {
+
+    }
+}

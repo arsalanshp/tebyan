@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gesture-image="http://schemas.polites.com/android"
+    android:background="@color/white"
+    android:id="@+id/layout"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <ProgressBar
+        android:id="@+id/pb_loading_vpp"
+        android:indeterminateDrawable="@anim/pb_default"
+        android:layout_gravity="right"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <com.polites.GestureImageView
+        android:id="@+id/iv_content_vpp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        gesture-image:max-scale="10.0"
+        gesture-image:min-scale="0.75" />
+</FrameLayout>
