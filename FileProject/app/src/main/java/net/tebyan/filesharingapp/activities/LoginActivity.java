@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     String _token;
     ProgressBar _progressBar;
     ProgressDialog builder;
+    //aaaaaaaa
     Activity activity;
 
     public void initialize() {
