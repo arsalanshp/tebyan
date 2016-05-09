@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -232,6 +233,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     item.setTitle(getString(R.string.select_all));
                 }
                 isPressed = !isPressed;
+                Log.d("test","test");
                 break;
             }
             case R.id.action_change_view: {
