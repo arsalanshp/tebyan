@@ -89,7 +89,7 @@ public class Utils {
     public static void setFilePublic(final Activity activity, String canEdit, String ps, String fileID /*,String friendIds*/) {
         if (Utils.isOnline(activity)) {
             Ion.with(activity)
-                    .load(WebserviceUrl.FullShareFile + canEdit + WebserviceUrl.ps + ps + WebserviceUrl.FriendId + "" /*friendIds*/ + WebserviceUrl.FileId + fileID)
+                    .load(WebserviceUrl.FullShareFile + canEdit + WebserviceUrl.ps + ps + WebserviceUrl.FriendId + "" /*friendIds*/ + WebserviceUrl.FileId + fileID+"&shareText=")
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(activity))
                     .asJsonObject()
@@ -199,7 +199,6 @@ public class Utils {
         final Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, "");
-        intent.setType("text/plain");
         final Uri fileUri;
         fileUri = Uri.parse(path);
         intent.putExtra(Intent.EXTRA_STREAM,fileUri);

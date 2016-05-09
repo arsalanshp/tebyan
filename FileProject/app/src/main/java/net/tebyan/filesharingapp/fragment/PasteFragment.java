@@ -192,6 +192,10 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
                                         fragment.getStaredFiles();
                                     }
+                                    if (tag == "deleted") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getDeletedFiles();
+                                    }
                                     Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
                                 } else
                                     Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();

@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ContextMenuRecyclerView rv;
     FolderAdapter adapter;
     String FileID = "";
-    ProgressBar progress_bar;
+    public ProgressBar progress_bar;
     String friendIds = "";
     RelativeLayout relFrgTab;
     TextView username_menu;
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        openRightMenuFragment("home",0);
+        openRightMenuFragment("home", 0);
         scheduleAlarm();
         activity = this;
         Application.currentActivity = this;
@@ -238,7 +238,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() >1)
+                getSupportFragmentManager().popBackStack();
+            else {
+                HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
+                if(Application.ParrentFolder!=null) {
+                    homeFragment.getFiles("Title", Application.ParrentFolder);
+                }else {
+                super.onBackPressed();
+                finish();}
+            }
+
         }
     }
 
@@ -253,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         long frequency = 60 * 1000; // in ms
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), frequency, pendingIntent);
     }
-
 
 
     @Override
@@ -411,7 +420,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     public void addRegisteredFriend(final Activity activity, String firstName, String lastName, String number) {
         if (Utils.isOnline(this)) {
             //progress_bar.setVisibility(View.VISIBLE);
@@ -432,8 +440,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else
             Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
-
-
 
 
     public void createUploadAlertDialog() {
@@ -497,7 +503,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        alertDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //        alertDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
     }
-
 
 
     public void searchFile(String str) {
@@ -652,8 +657,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Utils.reloadMainActivity("", activity, false, false, "");
                 break;
             }
-            case R.id.nav_favorite:{
-                openRightMenuFragment("favorite",3);
+            case R.id.nav_favorite: {
+                openRightMenuFragment("favorite", 3);
                 break;
             }
             case R.id.favorite: {
@@ -666,7 +671,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.shared: {
                 /*Utils.reloadMainActivity("", activity, false, true, "");*/
-                openRightMenuFragment("shareWithMe",1);
+                openRightMenuFragment("shareWithMe", 1);
                 break;
             }
             case R.id.deleted: {
@@ -675,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.exit: {
-                ((MainActivity)activity).logout();
+                ((MainActivity) activity).logout();
                 break;
             }
             case R.id.nav_upgrade_web: {
@@ -689,6 +694,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
 
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -816,6 +822,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
+
     public void getFriendsForShareFile_(String fileIdClicked) {
         if (Utils.isOnline(activity)) {
             progress_bar.setVisibility(View.VISIBLE);
@@ -836,8 +843,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
-
-
 
 
     public void getDeletedFiles() {
@@ -935,7 +940,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     public class MyAyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -968,37 +972,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void openRightMenuFragment(String tag,int type) {
-        Fragment fragment =new HomeFragment();
+    private void openRightMenuFragment(String tag, int type) {
+        Fragment fragment = new HomeFragment();
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         //fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
-                //android.R.animator.fade_out);
-        Bundle bundle=new Bundle();
-        bundle.putInt("type",type);
-        bundle.putBoolean("pasteMode",false);
+        //android.R.animator.fade_out);
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", type);
+        bundle.putBoolean("pasteMode", false);
         fragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.frame, fragment, tag);
         fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
     }
 
-    public interface RefreshDirectory{
+    public interface RefreshDirectory {
         void refreshFile(String currentFolder);
     }
-    public interface PasteConfirm{
+
+    public interface PasteConfirm {
         void pasteConfirm();
     }
-    public interface CutConfirm{
+
+    public interface CutConfirm {
         void cutConfirm(String tag);
     }
-    public interface DismissPasteDialog{
-        void  dismissPasteDialog();
+
+    public interface DismissPasteDialog {
+        void dismissPasteDialog();
     }
-    public interface SelectedItems{
-        void  getAllItems();
+
+    public interface SelectedItems {
+        void getAllItems();
     }
-    public interface deSelectedItems{
-        void  clearAllItems();
+
+    public interface deSelectedItems {
+        void clearAllItems();
     }
 }

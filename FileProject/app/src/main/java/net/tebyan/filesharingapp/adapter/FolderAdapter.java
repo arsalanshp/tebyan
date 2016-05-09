@@ -33,7 +33,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
     MenuFragment.ShowMenu handler;
     public int type;
     MainActivity.RefreshDirectory refreshHandler;
-    private SparseBooleanArray selectedItems;
+    public SparseBooleanArray selectedItems;
 
     public FolderAdapter(FragmentActivity context, GetFileModel_ data,int type) {
         super();
@@ -168,8 +168,19 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
             homeFragment.setHandler(this);
             homeFragment.setDeSelectHandler(this);
             HomeFragment shareFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("shareWithMe");
+            HomeFragment favoriteFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("favorite");
+            HomeFragment deletedFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("deleted");
             if(shareFragment!=null) {
                 shareFragment.setHandler(this);
+                shareFragment.setDeSelectHandler(this);
+            }
+            if(favoriteFragment!=null) {
+                favoriteFragment.setHandler(this);
+                favoriteFragment.setDeSelectHandler(this);
+            }
+            if(deletedFragment!=null) {
+                deletedFragment.setHandler(this);
+                deletedFragment.setDeSelectHandler(this);
             }
             this.imgShared = (ImageView) view.findViewById(R.id.img_share);
             this.imgThumbnail = (ImageView) view.findViewById(R.id.img_thumbnail);
