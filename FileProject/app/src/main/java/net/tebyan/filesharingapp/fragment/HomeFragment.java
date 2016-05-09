@@ -234,6 +234,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 }
                 isPressed = !isPressed;
                 Log.d("test","test");
+                Log.d("test","test");
                 break;
             }
             case R.id.action_change_view: {
