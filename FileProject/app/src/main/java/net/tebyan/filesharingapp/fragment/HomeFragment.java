@@ -317,6 +317,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void getFiles(String sortBy, String currentFolder) {
         if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
+            if(currentFolder==null){
+                currentFolder="";
+            }
             String url = WebserviceUrl.GetFiles + currentFolder;
             if (sortBy != null && !sortBy.isEmpty()) {
                 url += "&orderBy=" + sortBy;
@@ -324,6 +327,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
             Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(getActivity()))
+
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
                         @Override
@@ -349,10 +353,10 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     private int[] addHeaders(GetFileModel_ result) {
-
+        data.Data.Files.clear();
         int[] headerPosition = {-1, -1};
         Boolean isHeader = true;
-        if (result.Data.Files.get(0).IsFolder) {
+        if (result.Data.Files.size()>0 && result.Data.Files.get(0).IsFolder) {
             data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
             headerPosition[0] = 0;
         }
@@ -365,7 +369,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }
             data.Data.Files.add(result.Data.Files.get(i));
         }
-//        adapter.data = data;
+        adapter.data = data;
         adapter.notifyDataSetChanged();
         return headerPosition;
     }
@@ -416,15 +420,12 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                     Application.ParrentFolder = "";
                                 else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                data = result;
-                                /*adapter.data = result;*/
-                                adapter.notifyDataSetChanged();
-                                if (result.Data != null && result.Error == null && e == null) {
+                                addHeaders(result);
+/*                                if (result.Data != null && result.Error == null && e == null) {
                                     if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
                                         Application.ParrentFolder = "";
                                 } else
-                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                setNewAdapter(type);
+                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;*/
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -448,7 +449,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                     Application.ParrentFolder = "";
                                 else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                setNewAdapter(type);
+                                addHeaders(result);
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -472,8 +473,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                     Application.ParrentFolder = "";
                                 else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                data = result;
-                                /*adapter.data = result;*/
+                                addHeaders(result);
                                 adapter.notifyDataSetChanged();
 
                             } else
