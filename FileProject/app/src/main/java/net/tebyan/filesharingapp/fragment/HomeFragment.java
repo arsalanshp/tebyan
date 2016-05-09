@@ -88,33 +88,30 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
     public void initUI() {
         rv = (ContextMenuRecyclerView) view.findViewById(R.id.rv);
-
     }
 
     public void initData() {
         data = new GetFileModel_();
         type = getArguments().getInt("type");
+        setAdapter(type);
         switch (type) {
             case 0: {
                 getFiles("", "");
-                setAdapter(type);
                 return;
             }
             case 1: {
                 getSharedWithMe(currentFolder);
-                setAdapter(type);
                 return;
             }
             case 2: {
                 getDeletedFiles();
-                setAdapter(type);
                 return;
             }
             case 3: {
                 getStaredFiles();
-                setAdapter(type);
                 return;
             }
+
         }
     }
 
@@ -124,18 +121,13 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         adapter.setRefreshHandler(this);
         isTablet(activity);
         if (isTablet(activity)) {
-            rv.setHasFixedSize(true);
             manager = new GridLayoutManager(activity, 3);
-            rv.setLayoutManager(manager);
         } else {
-            rv.setHasFixedSize(true);
             manager = new GridLayoutManager(activity, 2);
-            rv.setLayoutManager(manager);
         }
-
-
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(manager);
         rv.setAdapter(adapter);
-
     }
 
     public static Boolean isTablet(Context context) {
@@ -234,6 +226,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     if (isTablet(getActivity())) {
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                     } else {
+
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
                     }
                     item.setIcon(R.drawable.grid_1);

@@ -225,8 +225,8 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
                 .setCallback(new FutureCallback<String>() {
                     @Override
                     public void onCompleted(Exception e, String result) {
-                        Log.i("test",e.getMessage());
-                        Log.i("test",result);
+                        //Log.i("test",e.getMessage());
+                        //Log.i("test",result);
                     }
                 });
     }
