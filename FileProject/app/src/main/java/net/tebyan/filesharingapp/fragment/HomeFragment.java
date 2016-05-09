@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public MainActivity.RefreshDirectory handler;
     boolean isPressed = true;
     public int type;
-    public Boolean changeView = false;
+    public Boolean changeView = true;
     private MultiSelector mMultiSelector = new MultiSelector();
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
@@ -235,21 +235,25 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 break;
             }
             case R.id.action_change_view: {
-                changeView = !changeView;
-                adapter.changeView = !adapter.changeView;
+                changeView = changeView?false:true;
+                adapter.changeView = adapter.changeView?false:true;
                 getActivity().supportInvalidateOptionsMenu();
-                rv.setHasFixedSize(true);
+
                 if (adapter.changeView) {
                     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    rv.setHasFixedSize(true);
                 } else {
                     if (isTablet(getActivity())) {
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+                        rv.setHasFixedSize(true);
                     } else {
 
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                        rv.setHasFixedSize(true);
                     }
                     item.setIcon(R.drawable.grid_1);
                 }
+                adapter.notifyDataSetChanged();
             }
         }
 
@@ -332,7 +336,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
             if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
                 data.Data.Files.add(new FileData(getString(R.string.file), true, false));
-                headerPosition[2] = i + 1;
+                headerPosition[1] = i + 1;
                 isHeader = false;
             }
             data.Data.Files.add(result.Data.Files.get(i));
