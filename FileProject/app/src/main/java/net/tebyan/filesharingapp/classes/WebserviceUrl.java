@@ -30,6 +30,7 @@ public class WebserviceUrl {
     public static String MoveFile = RepositoryServiceUrl + "Move?id=";
     public static String Delete = RepositoryServiceUrl + "Delete";
     public static String ZipFile = RepositoryServiceUrl + "ZipFile";
+    public static String UnZipFile = RepositoryServiceUrl + "UnZipFile";
     public static String GetFileInfo = RepositoryServiceUrl + "GetFileInfo?fileId=";
     public static String GetFriends = SiteUrl + "/api/Account/GetFriends";
     public static String AddFriends = SiteUrl + "/api/Account/AddFriend";

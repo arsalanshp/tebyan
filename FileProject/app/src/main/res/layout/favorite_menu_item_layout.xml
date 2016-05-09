@@ -203,59 +203,6 @@
         android:weightSum="3">
 
         <TextView
-            android:id="@+id/txt_favorite"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="7dp"
-            android:layout_weight="2"
-            android:gravity="right|center"
-            android:text="@string/favorite"
-            android:textColor="#000000"
-            android:textSize="15sp" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:src="@drawable/ic_content_copy" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="right"
-        android:layout_margin="5dp"
-        android:gravity="right"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <TextView
-            android:id="@+id/txt_rename"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="7dp"
-            android:layout_weight="2"
-            android:gravity="right|center"
-            android:text="@string/rename"
-            android:textColor="#000000"
-            android:textSize="15sp" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.15"
-            android:src="@drawable/ic_content_copy" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="right"
-        android:layout_margin="5dp"
-        android:gravity="right"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
-        <TextView
             android:id="@+id/txt_remove"
             android:layout_width="0dp"
             android:layout_height="match_parent"

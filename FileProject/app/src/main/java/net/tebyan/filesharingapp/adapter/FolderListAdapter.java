@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Created by F.piri on 1/25/2016.
  */
 
-public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomViewHolder> {
+public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.CustomViewHolder> {
     public GetFileModel_ data;
     FragmentActivity activity;
     ArrayList<FileData> fileSelected;
@@ -35,7 +35,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
     MainActivity.RefreshDirectory refreshHandler;
     private SparseBooleanArray selectedItems;
 
-    public FolderAdapter(FragmentActivity context, GetFileModel_ data,int type) {
+    public FolderListAdapter(FragmentActivity context, GetFileModel_ data ,int type) {
         super();
         activity = context;
         this.data = data;
@@ -59,7 +59,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
         if (viewType == 0) {
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.header_layout, viewGroup, false);
         } else if (viewType == 1) {
-                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, viewGroup, false);
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_layout, viewGroup, false);
         } else if (viewType == 2) {
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_folder_row, viewGroup, false);
         }

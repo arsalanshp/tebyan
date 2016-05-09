@@ -26,6 +26,7 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
     public MainActivity.PasteConfirm handler;
     public MainActivity.CutConfirm cutHandler;
     public String type;
+    public String tag;
 
     @Nullable
     @Override
@@ -39,15 +40,18 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
         txtCancel = (TextView) view.findViewById(R.id.txt_paste_cancel);
         selected = getArguments().getString("index");
         txtCancel.setOnClickListener(this);
+        tag=getArguments().getString("tag");
         showHomeFragment();
         getDialog().setTitle(getString(R.string.paste_dialog_header));
         return view;
     }
 
     public void setHandler(MainActivity.PasteConfirm handler) {
+
         this.handler = handler;
     }
     public void setPasteHandler(MainActivity.CutConfirm handler) {
+
         this.cutHandler = handler;
     }
 
@@ -60,6 +64,7 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
     private void showHomeFragment() {
         PasteFragment fragment = new PasteFragment();
         fragment.setHandler(this);
+
         fragment.dialog=this;
         android.support.v4.app.FragmentManager fragmentManager = getChildFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -78,7 +83,7 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
                 if(type=="copy") {
                     handler.pasteConfirm();
                 }else{
-                    cutHandler.cutConfirm();
+                    cutHandler.cutConfirm(tag);
                 }
                 break;
             }

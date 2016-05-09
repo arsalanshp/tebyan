@@ -1,7 +1,6 @@
 package net.tebyan.filesharingapp.fragment;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +8,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.tebyan.filesharingapp.R;
-import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.Utils;
-import net.tebyan.filesharingapp.classes.WebserviceUrl;
 
 /**
  * Created by v.karimi on 5/1/2016.
@@ -48,6 +44,7 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
+        dialog.setTitle("عملیات مورد نظر");
         super.setupDialog(dialog, style);
         View contentView = View.inflate(getContext(), R.layout.delete_menu_item_layout, null);
         txtDelete = (TextView) contentView.findViewById(R.id.txt_delete);
@@ -59,7 +56,6 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
-            Log.i("Sdf","sdfsdf");
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
@@ -68,12 +64,13 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txt_move: {
+            case R.id.txt_delete_move: {
                 Toast.makeText(getContext(), R.string.cut, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
                 bundle.putString("index", selected);
-                bundle.putString("type","cut");
+                bundle.putString("type", "cut");
+                bundle.putString("tag","deleted");
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
@@ -84,12 +81,7 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
                 break;
             }
             case R.id.txt_delete: {
-                String url = WebserviceUrl.DownloadFile + Application.getToken(getActivity()) + WebserviceUrl.FileIdDownload + selected.substring(0, selected.length() - 1);
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT, "آدرس دانلود");
-                i.putExtra(Intent.EXTRA_TEXT, url);
-                startActivity(Intent.createChooser(i, "Share URL"));
+               Utils.deleteConfirm(selected.substring(0, selected.length() - 1), getActivity());
                 break;
             }
         }

@@ -410,30 +410,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    public void delete_File_(String fileID) {
-        if (Utils.isOnline(this)) {
-            progress_bar.setVisibility(View.VISIBLE);
-            JsonObject json = new JsonObject();
-            json.addProperty("fileId", fileID);
-            Ion.with(this)
-                    .load(WebserviceUrl.Delete)
-                    .setTimeout(1000000000)
-                    .setHeader("userToken", token)
-                    .setJsonObjectBody(json)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            progress_bar.setVisibility(View.GONE);
-                            if (e == null) {
-                                Utils.reloadMainActivity(Application.CurrentFolder, activity);
-                                Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        } else
-            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-    }
+
 
     public void addRegisteredFriend(final Activity activity, String firstName, String lastName, String number) {
         if (Utils.isOnline(this)) {
@@ -743,7 +720,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
-            case R.id.delete: {
+            /*case R.id.delete: {
                 if (Application.fileIdSelected.equals("")) {
                     if (!deletedFiles)
                         delete_File(data.Data.Files.get(info.position).FileID);
@@ -757,7 +734,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 Application.fileIdSelected = "";
                 break;
-            }
+            }*/
             case R.id.cut: {
                 if (!data.Data.Files.get(info.position).IsFolder) {
                     Application.fileIdClicked = data.Data.Files.get(info.position).FileID;
@@ -1013,7 +990,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         void pasteConfirm();
     }
     public interface CutConfirm{
-        void cutConfirm();
+        void cutConfirm(String tag);
     }
     public interface DismissPasteDialog{
         void  dismissPasteDialog();

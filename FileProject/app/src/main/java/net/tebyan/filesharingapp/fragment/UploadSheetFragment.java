@@ -29,7 +29,6 @@ import com.photoselector.model.PhotoModel;
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
-import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FileUploadInput;
 import net.tebyan.filesharingapp.model.FileUploadResultModel;
@@ -109,7 +108,7 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 break;
             }
             case R.id.txt_share_link: {
-                Utils.zipFile(selected, getActivity());
+                /*Utils.zipFile(selected, getActivity(),"favorite");*/
                 break;
             }
 

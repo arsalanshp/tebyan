@@ -151,12 +151,60 @@ public class Utils {
                     @Override
                     public void onCompleted(Exception e, File file) {
                         if (e == null) {
-                            Toast.makeText(activity, "Success...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "فایل با موفقیت دانلود شد", Toast.LENGTH_SHORT).show();
                             mProgressDialog.cancel();
                             openFile(folder + "/" + filename, activity);
-                        } else Toast.makeText(activity, "Failed!", Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(activity, "اشکال در عملیات دانلود", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    public static void shareFile(final String filename1, String fileId1, final Activity activity) {
+        final String filename = filename1.split(",")[0];
+        final String fileId = fileId1.split(",")[0];
+        final File folder = new File(Environment.getExternalStorageDirectory() + "/TebyanFiles/");
+        if (!folder.isDirectory())
+            folder.mkdir();
+        final ProgressDialog mProgressDialog;
+        mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog.setTitle(activity.getString(R.string.downloading));
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setMax(100);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.show();
+        Ion.with(activity)
+                .load(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileId)
+                .progressHandler(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long downloaded, long total) {
+                        //mProgressDialog.setProgress((int) ((float) downloaded / (float) total) * 100);
+                    }
+                })
+                .write(new File(folder + "/" + filename))
+                .setCallback(new FutureCallback<File>() {
+                    @Override
+                    public void onCompleted(Exception e, File file) {
+                        if (e == null) {
+                            Toast.makeText(activity, "فایل با موفقیت دانلود شد", Toast.LENGTH_SHORT).show();
+                            mProgressDialog.cancel();
+                            shareFileToNetwork(folder + "/" + filename, activity);
+                        } else
+                            Toast.makeText(activity, "اشکال در عملیات اشتراک", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private static void shareFileToNetwork(String path, Activity activity) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, "");
+        intent.setType("text/plain");
+        final Uri fileUri;
+        fileUri = Uri.parse(path);
+        intent.putExtra(Intent.EXTRA_STREAM,fileUri);
+        intent.setType("*/*");
+        activity.startActivity(intent);
     }
 
     public static void openFile(String filePath, Activity activity) {
@@ -214,9 +262,7 @@ public class Utils {
     }
 
 
-
-
-    public static void deleteFile(String fileID1, final FragmentActivity activity) {
+    public static void deleteFile(String fileID1, final FragmentActivity activity, final String tag) {
         if (Utils.isOnline(activity)) {
             String fileID = fileID1.substring(0, fileID1.length() - 1);
             final ProgressDialog mProgressDialog;
@@ -240,10 +286,25 @@ public class Utils {
                         public void onCompleted(Exception e, JsonObject result) {
                             mProgressDialog.dismiss();
                             if (e == null) {
-                                Utils.reloadMainActivity(Application.CurrentFolder, activity);
-                                Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
+                                    if (tag == "home") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                    }
+                                    if (tag == "favorite") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getStaredFiles();
+                                    }
+                                    if (tag == "deleted") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getDeletedFiles();
+                                    }
+                                    Toast.makeText(activity, R.string.file_is_deleted, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
+
                     });
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
@@ -289,8 +350,7 @@ public class Utils {
                                     Toast.makeText(activity, R.string.moved, Toast.LENGTH_SHORT).show();
                                 } else
                                     Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
-                            } else
-                                Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 
@@ -325,7 +385,7 @@ public class Utils {
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    public static void zipFile(String fileID, final FragmentActivity activity) {
+    public static void zipFile(String fileID, final FragmentActivity activity, final String tag) {
         if (Utils.isOnline(activity)) {
             final ProgressDialog mProgressDialog;
             mProgressDialog = new ProgressDialog(activity);
@@ -348,10 +408,18 @@ public class Utils {
                         public void onCompleted(Exception e, JsonObject result) {
                             mProgressDialog.dismiss();
                             if (e == null) {
-                                /*Utils.reloadMainActivity(Application.CurrentFolder, activity);*/
-                                HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
-                                fragment.getFiles("Title", Application.CurrentFolder);
-                                //Toast.makeText(activity, "success!", Toast.LENGTH_SHORT).show();
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
+                                    if (tag == "home") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                    }
+                                    if (tag == "favorite") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getStaredFiles();
+                                    }
+                                    Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -436,7 +504,7 @@ public class Utils {
     public static void favoriteFile(String fileId1, final FragmentActivity activity) {
         if (Utils.isOnline(activity)) {
             final ProgressDialog mProgressDialog;
-            String fileId=fileId1.substring(0,fileId1.length()-1);
+            String fileId = fileId1.substring(0, fileId1.length() - 1);
             mProgressDialog = new ProgressDialog(activity);
             mProgressDialog.setTitle(activity.getString(R.string.favorite));
             mProgressDialog.setCancelable(false);
@@ -450,8 +518,8 @@ public class Utils {
                     .load(WebserviceUrl.staredFiles)
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(activity))
-                    .setHeader("Content-Type","application/x-www-form-urlencoded")
-                    .setBodyParameter("fileId",fileId)
+                    .setHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .setBodyParameter("fileId", fileId)
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
@@ -468,7 +536,8 @@ public class Utils {
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
-    public static void  RestoreFile(String fileID, final FragmentActivity activity) {
+
+    public static void RestoreFile(String fileID, final FragmentActivity activity) {
         if (Utils.isOnline(activity)) {
             final ProgressDialog mProgressDialog;
             mProgressDialog = new ProgressDialog(activity);
@@ -495,6 +564,83 @@ public class Utils {
                                 HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("deleted");
                                 fragment.getDeletedFiles();
                             }
+                        }
+                    });
+        } else
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void deleteConfirm(String fileID, final FragmentActivity activity) {
+        if (Utils.isOnline(activity)) {
+            final ProgressDialog mProgressDialog;
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setTitle("در حال حذف...");
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.show();
+            JsonObject json = new JsonObject();
+            json.addProperty("fileId", fileID);
+            Ion.with(activity)
+                    .load(WebserviceUrl.Delete)
+                    .setTimeout(1000000000)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
+                                HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("deleted");
+                                fragment.getDeletedFiles();
+                            }
+                        }
+                    });
+        } else
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void unZipFile(String fileID, final FragmentActivity activity, final String tag) {
+        if (Utils.isOnline(activity)) {
+            final ProgressDialog mProgressDialog;
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setTitle("در حال فشرده سازی");
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.show();
+            JsonObject json = new JsonObject();
+            json.addProperty("fileId", fileID);
+            Ion.with(activity)
+                    .load(WebserviceUrl.UnZipFile)
+                    .setTimeout(1000000000)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
+                                    if (tag == "home") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                    }
+                                    if (tag == "favorite") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getStaredFiles();
+                                    }
+                                    Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
+                            }
+
+
                         }
                     });
         } else

@@ -39,7 +39,8 @@
     <string name="favorite">اضافه به علاقه مندی ها</string>
     <string name="rename">تغییر نام</string>
     <string name="move">جابجا کردن</string>
-    <string name="zip">فشرده سازی</string>
+    <string name="zip_unzip">فشرده سازی/باز کردن</string>
+    <string name="de_share">قطع اشتراک</string>
     <string name="copy">کپی</string>
     <string name="share_link">اشتراک لینک</string>
     <string name="share_file">اشتراک فایل</string>
@@ -104,9 +105,10 @@
     <string name="back">بازگشت</string>
     <string name="paste_not_possible">پیست فایل امکان پذیر نیست</string>
     <string name="taking_pictures">دوربین</string>
-    <string name="pasted">فایل پیست شد</string>
+    <string name="pasted">فایل با موفقیت انتقال یافت</string>
     <string name="copied">فایل کپی شد</string>
     <string name="moved">فایل کات شد</string>
+    <string name="un_zip">عملیات با موفقیت انجام شد</string>
     <string name="renamed">تغییر نام اعمال شد</string>
     <string name="uploading">در حال بارگذاری فایل</string>
     <string name="upload_image">عکس</string>

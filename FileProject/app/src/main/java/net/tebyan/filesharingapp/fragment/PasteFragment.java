@@ -1,9 +1,9 @@
 package net.tebyan.filesharingapp.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +38,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public String selected;
     public String token;
     public String currentFolder;
-    public Activity activity;
+    public FragmentActivity activity;
     public int type;
     public MainActivity.DismissPasteDialog handler;
     public PasteDialogFragment dialog;
@@ -68,6 +68,8 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public void initUI() {
         rv = (ContextMenuRecyclerView) view.findViewById(R.id.rv);
         dialog.setHandler(this);
+        dialog.setPasteHandler(this);
+
     }
 
     public void initData() {
@@ -103,7 +105,6 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                         public void onCompleted(Exception e, final GetFileModel_ result) {
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (result != null) {
-
                                 if (result.Data != null && result.Error == null && e == null) {
                                     if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
                                         Application.ParrentFolder = "";
@@ -112,17 +113,19 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                     int headerPos = 0;
                                     Boolean isHeader = true;
                                     final GetFileModel_ data = new GetFileModel_();
-                                    if (result.Data.Files.get(0).IsFolder) {
-                                        data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
-                                    }
-                                    for (int i = 0; i < result.Data.Files.size(); i++) {
-
-                                        if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
-                                            data.Data.Files.add(new FileData(getString(R.string.file), true, false));
-                                            headerPos = i + 1;
-                                            isHeader = false;
+                                    if(result.Data.Files.size()>0) {
+                                        if (result.Data.Files.get(0).IsFolder) {
+                                            data.Data.Files.add(new FileData(getString(R.string.folder), true,false));
                                         }
-                                        data.Data.Files.add(result.Data.Files.get(i));
+                                        for (int i = 0; i < result.Data.Files.size(); i++) {
+
+                                            if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
+                                                data.Data.Files.add(new FileData(getString(R.string.file), true,false));
+                                                headerPos = i + 1;
+                                                isHeader = false;
+                                            }
+                                            data.Data.Files.add(result.Data.Files.get(i));
+                                        }
                                     }
                                     adapter.data = data;
                                     adapter.notifyDataSetChanged();
@@ -154,12 +157,11 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
                                 handler.dismissPasteDialog();
-                                // if (result.get("Error").equals("null")) {
-                                Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
-                                //} else {
-                                //Toast.makeText(activity, "paste error", Toast.LENGTH_SHORT).show();
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
 
-                                //}
+                                    Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -168,22 +170,31 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     }
 
     @Override
-    public void cutConfirm() {
+    public void cutConfirm(final String tag) {
         if (Utils.isOnline(activity)) {
+            if(currentFolder==null){
+                currentFolder="";
+            }
             Ion.with(activity)
-                    .load(WebserviceUrl.CopyFile + selected.substring(0, selected.length() - 1) + WebserviceUrl.FolderId + currentFolder)
+                    .load(WebserviceUrl.MoveFile + selected.substring(0, selected.length() - 1) + WebserviceUrl.FolderId + currentFolder)
                     .setHeader("userToken", Application.getToken(activity)).asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
                                 handler.dismissPasteDialog();
-                                // if (result.get("Error").equals("null")) {
-                                Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
-                                //} else {
-                                //Toast.makeText(activity, "paste error", Toast.LENGTH_SHORT).show();
-
-                                //}
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
+                                    if (tag == "home") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                    }
+                                    if (tag == "favorite") {
+                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getStaredFiles();
+                                    }
+                                    Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
