@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
     private ArrayList<FileData> fileDatas;
+    private int[] pos = new int[2];
 
     @Nullable
     @Override
@@ -97,22 +98,23 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         switch (type) {
             case 0: {
                 getFiles("", "");
-                return;
+                break;
             }
             case 1: {
                 getSharedWithMe(currentFolder);
-                return;
+                break;
             }
             case 2: {
                 getDeletedFiles();
-                return;
+                break;
             }
             case 3: {
                 getStaredFiles();
-                return;
+                break;
             }
 
         }
+        adapter.notifyDataSetChanged();
     }
 
     public void setAdapter(int type) {
@@ -125,9 +127,27 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         } else {
             manager = new GridLayoutManager(activity, 2);
         }
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(manager);
-        rv.setAdapter(adapter);
+        if (manager != null) {
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if ((pos[0] != -1 && position != pos[0]) || (pos[1] != -1 && position != pos[1])) {
+                        if (isTablet(getActivity())) {
+                            return 3;
+                        } else {
+                            return 2;
+                        }
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+            rv.setLayoutManager(manager);
+            rv.setHasFixedSize(true);
+            rv.setLayoutManager(manager);
+            rv.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public static Boolean isTablet(Context context) {
@@ -222,7 +242,6 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 if (adapter.changeView) {
                     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
                 } else {
-                    setSpan(adapter.data);
                     if (isTablet(getActivity())) {
                         rv.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                     } else {
@@ -231,7 +250,6 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     }
                     item.setIcon(R.drawable.grid_1);
                 }
-                adapter.notifyDataSetChanged();
             }
         }
 
@@ -284,14 +302,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         public void onCompleted(Exception e, final GetFileModel_ result) {
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (result != null) {
-
+                                pos = addHeaders(result);
                                 if (result.Data != null && result.Error == null && e == null) {
                                     if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
                                         Application.ParrentFolder = "";
                                     else
                                         Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
 
-                                    setSpan(result);
+                                    // setAdapter(type);
                                 } else
                                     Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                             } else
@@ -302,44 +320,28 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    private void setSpan(GetFileModel_ result) {
-        int headerPos = 0;
+    private int[] addHeaders(GetFileModel_ result) {
+
+        int[] headerPosition = {-1, -1};
         Boolean isHeader = true;
-        final GetFileModel_ data = new GetFileModel_();
         if (result.Data.Files.get(0).IsFolder) {
             data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
+            headerPosition[0] = 0;
         }
         for (int i = 0; i < result.Data.Files.size(); i++) {
 
             if (!(result.Data.Files.get(i).IsFolder) && isHeader) {
                 data.Data.Files.add(new FileData(getString(R.string.file), true, false));
-                headerPos = i + 1;
+                headerPosition[2] = i + 1;
                 isHeader = false;
             }
             data.Data.Files.add(result.Data.Files.get(i));
         }
-        final int finalHeaderPos = headerPos;
-        if (manager != null) {
-            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    if (position == 0 || (data.Data.Files.get(1).IsFolder && position == finalHeaderPos)) {
-                        if (isTablet(getActivity())) {
-                            return 3;
-                        } else {
-                            return 2;
-                        }
-                    } else {
-                        return 1;
-                    }
-                }
-            });
-            rv.setLayoutManager(manager);
-
-        }
         adapter.data = data;
         adapter.notifyDataSetChanged();
+        return headerPosition;
     }
+
 
     @Override
     public void showContextMenu(String fileIds, String fileNames, int type) {
@@ -390,7 +392,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                         Application.ParrentFolder = "";
                                 } else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                setSpan(result);
+                                setAdapter(type);
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -414,10 +416,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                     Application.ParrentFolder = "";
                                 else
                                     Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                data = result;
-                                adapter.data = result;
-                                adapter.notifyDataSetChanged();
-
+                                setAdapter(type);
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
