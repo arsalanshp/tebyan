@@ -97,7 +97,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
-                bundle.putString("type","cut");
+                bundle.putString("type","copy");
                 bundle.putString("index", selected);
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
@@ -121,16 +121,37 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 renameFile();
                 break;
             }
+            case R.id.txt_move: {
+                FragmentManager fm = getFragmentManager();
+                Bundle bundle = new Bundle();
+                bundle.putString("type","cut");
+                bundle.putString("tag","home");
+                bundle.putString("index", selected);
+                PasteDialogFragment dialogFragment = new PasteDialogFragment();
+                dialogFragment.setArguments(bundle);
+                dialogFragment.show(fm, "paste fragment");
+                break;
+            }
             case R.id.txt_send_file:{
+                Utils.shareFile(fileNames, selected, getActivity());
+                break;
+            }
+            case R.id.txt_add_people:{
                 getFriendsForShareFile(selected.substring(0,selected.length()-1));
                 break;
             }
             case R.id.txt_zip: {
-                Utils.zipFile(selected, getActivity());
+                String extension=fileNames.substring(fileNames.length()-4);
+                if(extension.trim().equals("zip,")) {
+                    Utils.unZipFile(selected.substring(0, selected.length() - 1), getActivity(), "home");
+
+                }else{
+                    Utils.zipFile(selected.substring(0,selected.length()-1), getActivity(),"home");
+                }
                 break;
             }
             case R.id.txt_remove: {
-                Utils.deleteFile(selected, getActivity());
+                Utils.deleteFile(selected, getActivity(),"home");
                 break;
             }
             case R.id.txt_favorite: {
