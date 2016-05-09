@@ -121,8 +121,8 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
     public void setNewAdapter(int type) {
         adapter = new FolderAdapter(getActivity(), data, type);
-        ((FolderAdapter)adapter).setHandler(this);
-        ((FolderAdapter)adapter).setRefreshHandler(this);
+        adapter.setHandler(this);
+        adapter.setRefreshHandler(this);
         isTablet(activity);
         if (isTablet(activity)) {
             rv.setHasFixedSize(true);
@@ -131,6 +131,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         } else {
             rv.setHasFixedSize(true);
             manager = new GridLayoutManager(activity, 2);
+            rv.setLayoutManager(manager);
         }
         if (manager != null) {
             manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -269,8 +270,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         rv.setAdapter(adapter);
                         rv.setHasFixedSize(true);
                     } else {
-                        rv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                        adapter=new FolderAdapter(getActivity(), data, type);
+                        rv.setLayoutManager(manager);
                        adapter.setHandler(this);
                         adapter.setRefreshHandler(this);
                         rv.setAdapter(adapter);
