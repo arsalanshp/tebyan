@@ -37,6 +37,8 @@ import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FileData;
 import net.tebyan.filesharingapp.model.GetFileModel_;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -56,13 +58,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public MainActivity.RefreshDirectory handler;
     boolean isPressed = true;
     public int type;
-    public static boolean  checkState=true;
+    public static boolean checkState = true;
     //public String parentFolder;
     public static Boolean changeView = false;
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
     private ArrayList<FileData> fileDatas;
     private int[] pos = new int[2];
+    private String fileSearched = "";
 
     @Nullable
     @Override
@@ -205,10 +208,8 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
             @Override
             public boolean onQueryTextSubmit(String text) {
-                searchView.setSearchableInfo(searchManager
-                        .getSearchableInfo(activity.getComponentName()));
-                Utils.reloadMainActivity("", activity, false, false, text);
-                activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                getSearchedFiles(text);
+                Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
                 return false;
             }
 
@@ -234,12 +235,12 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }*/
             case R.id.select_all_menu: {
                 if (isPressed) {
-                     checkState=selectHandler.getAllItems();
+                    checkState = selectHandler.getAllItems();
                     adapter.notifyDataSetChanged();
                     if (listAdapter != null) {
                         listAdapter.notifyDataSetChanged();
                     }
-                        item.setTitle(getString(R.string.clear_selection));
+                    item.setTitle(getString(R.string.clear_selection));
 
                 } else {
                     deSelectHandler.clearAllItems();
@@ -295,9 +296,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem selectAction = menu.findItem(R.id.select_all_menu);
-        if(checkState){
+        if (checkState) {
             selectAction.setTitle(getString(R.string.select_all));
-        }else{
+        } else {
             selectAction.setTitle(getString(R.string.clear_selection));
         }
 
@@ -385,7 +386,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         if (result != null) {
             data.Data.Files.clear();
             Boolean isHeader = true;
-            if(result.Data.Files.size() > 0 ) {
+            if (result.Data.Files.size() > 0) {
                 if (result.Data.Files.get(0).IsFolder) {
                     data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
                     headerPosition[0] = 0;
@@ -520,6 +521,41 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     });
         } else
             Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    public void getSearchedFiles(String str) {
+        if (Utils.isOnline(getActivity())) {
+            ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
+            try {
+                String encodedStr = URLEncoder.encode(str, "UTF-8");
+
+                Ion.with(this).load(WebserviceUrl.SearchFile + encodedStr)
+                        .setHeader("userToken", token)
+                        .as(GetFileModel_.class)
+                        .setCallback(new FutureCallback<GetFileModel_>() {
+                            @Override
+                            public void onCompleted(Exception e, GetFileModel_ result) {
+                                ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
+                                if (result.Data != null && result.Error == null && e == null) {
+                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
+                                        Application.ParrentFolder = "";
+                                    else
+                                        Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+                                } else
+                                    Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                                fileSearched = "";
+                                data = result;
+                                adapter.data = result;
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
