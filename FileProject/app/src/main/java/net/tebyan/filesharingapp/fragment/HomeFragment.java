@@ -209,7 +209,6 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             @Override
             public boolean onQueryTextSubmit(String text) {
                 getSearchedFiles(text);
-                Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
                 return false;
             }
 
