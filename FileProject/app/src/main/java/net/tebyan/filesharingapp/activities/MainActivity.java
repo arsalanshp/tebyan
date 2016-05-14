@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -1016,7 +1015,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public interface SelectedItems {
-        void getAllItems();
+        boolean getAllItems();
     }
 
     public interface deSelectedItems {

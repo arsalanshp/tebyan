@@ -192,7 +192,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
         }
 
         @Override
-        public void getAllItems() {
+        public boolean getAllItems() {
             for (int i = 0; i < data.Data.Files.size(); i++) {
                /* View view=this;
                 imgTick= (ImageView) view.findViewById(R.id.img_tick);*/
@@ -202,6 +202,10 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                     imgTick.setVisibility(View.VISIBLE);
                 }
             }
+            if(selectedItems.size()>0){
+                return true;
+            }else
+                return false;
         }
 
         @Override

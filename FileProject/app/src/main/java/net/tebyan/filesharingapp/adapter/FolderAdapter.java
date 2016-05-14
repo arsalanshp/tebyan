@@ -195,7 +195,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
         }
 
         @Override
-        public void getAllItems() {
+        public boolean getAllItems() {
             for (int i = 0; i < data.Data.Files.size(); i++) {
                /* View view=this;
                 imgTick= (ImageView) view.findViewById(R.id.img_tick);*/
@@ -205,6 +205,10 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
                     imgTick.setVisibility(View.VISIBLE);
                 }
             }
+            if(selectedItems.size()>0){
+                return false;
+            }else
+                return true;
         }
 
         @Override
@@ -302,12 +306,14 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
         return builder.toString();
     }
 
-    private String getSelectedItems() {
+    public String getSelectedItems() {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < selectedItems.size() + 1; i++) {
+        for (int i = 0; i < selectedItems.size(); i++) {
             if (selectedItems.valueAt(i)) {
-                builder.append(data.Data.Files.get(selectedItems.keyAt(i)).FileID);
-                builder.append(",");
+                if(data.Data.Files.get(selectedItems.keyAt(i)).FileID!=null) {
+                    builder.append(data.Data.Files.get(selectedItems.keyAt(i)).FileID);
+                    builder.append(",");
+                }
             }
         }
         return builder.toString();

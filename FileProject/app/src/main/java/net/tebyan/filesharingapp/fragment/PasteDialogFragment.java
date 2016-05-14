@@ -37,6 +37,7 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
         frame = (FrameLayout) view.findViewById(R.id.frame_layout);
         txtPaste = (TextView) view.findViewById(R.id.txt_paste_confirm);
         txtPaste.setOnClickListener(this);
+        txtPaste.setEnabled(true);
         txtCancel = (TextView) view.findViewById(R.id.txt_paste_cancel);
         selected = getArguments().getString("index");
         txtCancel.setOnClickListener(this);
@@ -45,6 +46,8 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
         getDialog().setTitle(getString(R.string.paste_dialog_header));
         return view;
     }
+
+
 
     public void setHandler(MainActivity.PasteConfirm handler) {
 
@@ -64,7 +67,6 @@ public class PasteDialogFragment extends DialogFragment implements View.OnClickL
     private void showHomeFragment() {
         PasteFragment fragment = new PasteFragment();
         fragment.setHandler(this);
-
         fragment.dialog=this;
         android.support.v4.app.FragmentManager fragmentManager = getChildFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

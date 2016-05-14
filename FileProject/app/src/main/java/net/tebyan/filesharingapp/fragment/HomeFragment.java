@@ -3,7 +3,6 @@ package net.tebyan.filesharingapp.fragment;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -57,6 +56,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public MainActivity.RefreshDirectory handler;
     boolean isPressed = true;
     public int type;
+    public static boolean  checkState=true;
     //public String parentFolder;
     public static Boolean changeView = false;
     public MainActivity.SelectedItems selectHandler;
@@ -176,12 +176,10 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         activity.getMenuInflater().inflate(R.menu.main, menu);
-
         MenuItem eventsMI = menu.findItem(R.id.action_events);
-
         MenuItemCompat.setActionView(eventsMI, R.layout.notif);
+
         /*View count = eventsMI.getActionView();
 
         notifCount = (Button) count.findViewById(R.id.notif_count);
@@ -236,12 +234,13 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }*/
             case R.id.select_all_menu: {
                 if (isPressed) {
-                    selectHandler.getAllItems();
+                     checkState=selectHandler.getAllItems();
                     adapter.notifyDataSetChanged();
                     if (listAdapter != null) {
                         listAdapter.notifyDataSetChanged();
                     }
-                    item.setTitle(getString(R.string.clear_selection));
+                        item.setTitle(getString(R.string.clear_selection));
+
                 } else {
                     deSelectHandler.clearAllItems();
                     adapter.notifyDataSetChanged();
@@ -291,6 +290,17 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem selectAction = menu.findItem(R.id.select_all_menu);
+        if(checkState){
+            selectAction.setTitle(getString(R.string.select_all));
+        }else{
+            selectAction.setTitle(getString(R.string.clear_selection));
+        }
+
     }
 
     private void sortDialog() {
@@ -375,9 +385,11 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         if (result != null) {
             data.Data.Files.clear();
             Boolean isHeader = true;
-            if (result.Data.Files.size() > 0 && result.Data.Files.get(0).IsFolder) {
-                data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
-                headerPosition[0] = 0;
+            if(result.Data.Files.size() > 0 ) {
+                if (result.Data.Files.get(0).IsFolder) {
+                    data.Data.Files.add(new FileData(getString(R.string.folder), true, false));
+                    headerPosition[0] = 0;
+                }
             }
             for (int i = 0; i < result.Data.Files.size(); i++) {
 

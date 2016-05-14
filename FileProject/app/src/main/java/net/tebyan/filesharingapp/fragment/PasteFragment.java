@@ -68,6 +68,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public void initUI() {
         rv = (ContextMenuRecyclerView) view.findViewById(R.id.rv);
         dialog.setHandler(this);
+        dialog.txtPaste.setEnabled(true);
         dialog.setPasteHandler(this);
 
     }
@@ -144,19 +145,29 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public void refreshFile(String currentFolder) {
         this.currentFolder = currentFolder;
         getFiles("Title", currentFolder);
+        initCopy(selected,currentFolder);
+    }
+    private void initCopy(String selected,String currentFolder) {
+        String [] arraySelected=selected.split(",");
+        for (int i=0;i<arraySelected.length;i++){
+            if(arraySelected[i].toString().equals(currentFolder)){
+                dialog.txtPaste.setEnabled(false);
+            }
+        }
     }
 
     @Override
     public void pasteConfirm() {
+        handler.dismissPasteDialog();
         if (Utils.isOnline(activity)) {
             Ion.with(activity)
                     .load(WebserviceUrl.CopyFile + selected.substring(0, selected.length() - 1) + WebserviceUrl.FolderId + currentFolder)
+                    .setTimeout(1000000)
                     .setHeader("userToken", Application.getToken(activity)).asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
-                                handler.dismissPasteDialog();
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
 
                                     Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
@@ -171,6 +182,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
 
     @Override
     public void cutConfirm(final String tag) {
+        handler.dismissPasteDialog();
         if (Utils.isOnline(activity)) {
             if(currentFolder==null){
                 currentFolder="";
@@ -182,7 +194,6 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
-                                handler.dismissPasteDialog();
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
