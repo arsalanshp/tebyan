@@ -347,7 +347,11 @@ public abstract class NewItemFragment extends DialogFragment {
                                 fileLocation.setText(filename.substring(1, filename.length() - 1));
                                 fileDate.setText(filedate.substring(1, filedate.length() - 1));
                                 fileSize.setText(filesize.substring(1, filesize.length() - 1));
-                                sharedBy.setText(getString(R.string.sharedBy) + sharedby);
+                                if (sharedby.toString().equals("null") || sharedby.trim().toString().isEmpty()) {
+                                    sharedBy.setVisibility(View.GONE);
+                                } else {
+                                    sharedBy.setText(getString(R.string.sharedBy) + sharedby);
+                                }
                             }
                         }
                     });

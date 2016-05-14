@@ -197,7 +197,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                        fragment.getFiles("Title",currentFolder );
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);

@@ -442,7 +442,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             Application.ParrentFolder = null;
 
         } else {
-            Application.ParrentFolder = currentFolder;
+            Application.ParrentFolder = Application.CurrentFolder;
         }
         Application.CurrentFolder = currentFolder;
         getFiles("Title", currentFolder);

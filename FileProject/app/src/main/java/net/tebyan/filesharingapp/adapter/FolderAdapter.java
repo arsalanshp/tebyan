@@ -297,7 +297,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
 
     private String getFileNames() {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < selectedItems.size() + 1; i++) {
+        for (int i = 0; i < selectedItems.size(); i++) {
             if (selectedItems.valueAt(i)) {
                 builder.append(data.Data.Files.get(selectedItems.keyAt(i)).Title);
                 builder.append(",");

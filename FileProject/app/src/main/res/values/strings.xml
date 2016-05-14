@@ -44,7 +44,7 @@
     <string name="copy">کپی</string>
     <string name="share_link">اشتراک لینک</string>
     <string name="share_file">اشتراک فایل</string>
-
+    <string name="un_star">حذف از علاقه مندی ها</string>
     <string name="cut">برش</string>
     <string name="paste">چسباندن</string>
     <string name="_public">عمومی</string>
@@ -125,4 +125,6 @@
     <string name="sort_by_name">براساس نام</string>
     <string name="sort_by_createdate">براساس تاریخ ایجاد</string>
     <string name="sort_by_size">براساس سایز</string>
+    <string name="info_error">برای مشاهده ی اطلاعات تنها یک فایل را انتخاب نمایید</string>
+    <string name="no_friend_error">هیچ موردی در لیست مخاطبین شما وجود ندارد</string>
 </resources>

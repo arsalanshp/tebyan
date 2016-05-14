@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +37,7 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
     public String selected;
     private String fileNames;
     String friendIds = "";
-    public TextView txtDownload, txtShareLink, txtSendFile, txtAddPeople, txtMove, txtRemove, txtCopy,txtZip;
+    public TextView txtDownload, txtShareLink, txtSendFile, txtAddPeople, txtRemove,txtUnStar;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
 
@@ -69,14 +68,10 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
         txtSendFile.setOnClickListener(this);
         txtAddPeople = (TextView) contentView.findViewById(R.id.txt_add_people);
         txtAddPeople.setOnClickListener(this);
-        txtZip = (TextView) contentView.findViewById(R.id.txt_zip);
-        txtZip.setOnClickListener(this);
-        txtMove = (TextView) contentView.findViewById(R.id.txt_move);
-        txtMove.setOnClickListener(this);
+        txtUnStar = (TextView) contentView.findViewById(R.id.txt_un_star);
+        txtUnStar.setOnClickListener(this);
         txtRemove = (TextView) contentView.findViewById(R.id.txt_remove);
         txtRemove.setOnClickListener(this);
-        txtCopy = (TextView) contentView.findViewById(R.id.txt_copy);
-        txtCopy.setOnClickListener(this);
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
@@ -89,16 +84,8 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txt_copy: {
-                Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
-                FragmentManager fm = getFragmentManager();
-                Bundle bundle = new Bundle();
-                bundle.putString("type","copy");
-                bundle.putString("tag","");
-                bundle.putString("index", selected);
-                PasteDialogFragment dialogFragment = new PasteDialogFragment();
-                dialogFragment.setArguments(bundle);
-                dialogFragment.show(fm, "paste fragment");
+            case R.id.txt_un_star: {
+             Utils.unStar(selected,getActivity());
                 break;
             }
             case R.id.txt_download: {
@@ -118,41 +105,8 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
                 break;
             }
-            case R.id.txt_zip: {
-                String extension=fileNames.substring(fileNames.length()-4);
-                if(extension!="zip,") {
-                    Utils.zipFile(selected.substring(0,selected.length()-1), getActivity(),"favorite");
-                }else{
-                    Utils.unZipFile(selected.substring(0,selected.length()-1), getActivity(),"favorite");
-                }
-                break;
-            }
             case R.id.txt_remove: {
-                Utils.deleteFile(selected, getActivity(),"favorite");
-                break;
-            }
-            case R.id.txt_paste_confirm: {
-                Toast.makeText(getContext(), R.string.cut, Toast.LENGTH_SHORT).show();
-                FragmentManager fm = getFragmentManager();
-                Bundle bundle = new Bundle();
-                bundle.putString("index", selected);
-                bundle.putString("type", "cut");
-                bundle.putString("tag","favorite");
-                PasteDialogFragment dialogFragment = new PasteDialogFragment();
-                dialogFragment.setArguments(bundle);
-                dialogFragment.show(fm, "paste fragment");
-                break;
-            }
-            case R.id.txt_move: {
-                Toast.makeText(getContext(), R.string.cut, Toast.LENGTH_SHORT).show();
-                FragmentManager fm = getFragmentManager();
-                Bundle bundle = new Bundle();
-                bundle.putString("index", selected);
-                bundle.putString("type", "cut");
-                bundle.putString("tag","favorite");
-                PasteDialogFragment dialogFragment = new PasteDialogFragment();
-                dialogFragment.setArguments(bundle);
-                dialogFragment.show(fm, "paste fragment");
+                Utils.deleteFile(selected, getActivity(), "favorite");
                 break;
             }
         }
