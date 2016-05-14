@@ -64,6 +64,7 @@
         android:layout_gravity="right"
         android:layout_margin="5dp"
         android:gravity="right"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:weightSum="3">
 

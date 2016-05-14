@@ -25,13 +25,16 @@ import com.koushikdutta.ion.Ion;
 import com.nononsenseapps.filepicker.AbstractFilePickerActivity;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.photoselector.model.PhotoModel;
+import com.photoselector.ui.PhotoSelectorActivity;
 
 import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FileUploadInput;
 import net.tebyan.filesharingapp.model.FileUploadResultModel;
+import net.tebyan.filesharingapp.model.MainModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ import java.util.List;
 public class UploadSheetFragment extends BottomSheetDialogFragment implements View.OnClickListener {
     public String selected;
     private String fileNames;
-    public ImageView imgUpload,imgUploadMovie,imgFolder;
+    public ImageView imgUpload, imgUploadMovie, imgFolder;
     public int SELECT_IMAGE_CODE = 1;
     public int SELECT_FILM_CODE = 3;
     public ArrayList<PhotoModel> uploadFiles;
@@ -92,22 +95,15 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
         switch (view.getId()) {
             case R.id.img_new_folder: {
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 0, getActivity());
+                dismiss();
                 break;
             }
             case R.id.img_upload_film: {
-                Intent i = new Intent(getActivity(), FilePickerActivity.class);
-                AbstractFilePickerActivity.isClip = false;
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, true);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-                /*i.putExtra(FilePickerActivity.EXTRA_TYPE, "*//*");*/
-                startActivityForResult(i, SELECT_FILM_CODE);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
+                ((MainActivity)getActivity()).startPhotoSelector();
+                dismiss();
                 break;
             }
-            case R.id.txt_share_link: {
+            case R.id.img_upload_file: {
                 /*Utils.zipFile(selected, getActivity(),"favorite");*/
                 break;
             }
@@ -115,6 +111,8 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
 
         }
     }
+
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return super.onCreateDialog(savedInstanceState);
@@ -125,54 +123,12 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
     public static String getRealPathFromURI(FragmentActivity activity, Uri contentUri) {
         String path = contentUri.getPath();
         return path;
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (uploadFiles != null)
-                uploadFiles.clear();
-            else {
-                uploadFiles = new ArrayList<PhotoModel>();
-            }
-            if (requestCode == SELECT_IMAGE_CODE && data != null && data.getExtras() != null) {
-                this.uploadFiles = (ArrayList<PhotoModel>) data.getExtras().getSerializable("photos");
-            } else if (requestCode == SELECT_FILM_CODE) {
-                if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
-                    // For JellyBean and above
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ClipData clip = data.getClipData();
 
-                        if (clip != null) {
-                            for (int i = 0; i < clip.getItemCount(); i++) {
-                                String path = getRealPathFromURI(getActivity(), clip.getItemAt(i).getUri());
-                                uploadFiles.add(new PhotoModel(path, true));
-                            }
-                        }
-                        // For Ice Cream Sandwich
-                    } else {
-                        ArrayList<String> paths = data.getStringArrayListExtra
-                                (FilePickerActivity.EXTRA_PATHS);
-                        if (paths != null) {
-                            for (String path : paths) {
-                                uploadFiles.add(new PhotoModel(path, true));
-                            }
-                        }
-                    }
-                } else {
-                    uploadFiles.add(new PhotoModel(data.getData().getPath(), true));
-                }
-            }
-            if (this.uploadFiles != null && !this.uploadFiles.isEmpty()) {
-                this.sizeOfPhotos = this.uploadFiles.size();
-                this.indexInPhotos = this.sizeOfPhotos - 1;
-                uploadPic(this.uploadFiles, this.indexInPhotos,getActivity());
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
     public void uploadPic(List<PhotoModel> files, int index, final FragmentActivity activity) {
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
@@ -203,7 +159,7 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                             }
                             if (indexInPhotos > 0) {
                                 indexInPhotos--;
-                                uploadPic(uploadFiles, indexInPhotos,activity);
+                                uploadPic(uploadFiles, indexInPhotos, activity);
                             } else {
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
                             }

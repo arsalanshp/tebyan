@@ -25,7 +25,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/accent"
+                android:background="@color/primary_dark"
                 android:elevation="4dp"></android.support.v7.widget.Toolbar>
 
             <LinearLayout
@@ -40,6 +40,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="@color/primary_text"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp">
 
@@ -57,7 +58,7 @@
                     android:id="@+id/btn_login"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/accent"
+                    android:background="@color/ligh_accent"
                     android:padding="12dp"
                     android:text="@string/signup" />
             </LinearLayout>
@@ -75,6 +76,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorHint="@color/primary_text"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp">
 
@@ -93,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/accent"
+                    android:background="@color/ligh_accent"
                     android:padding="12dp"
                     android:text="@string/confirm" />
 
@@ -103,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/accent"
+                    android:background="@color/ligh_accent"
                     android:padding="12dp"
                     android:text="@string/resend_phone" />
 
@@ -113,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/accent"
+                    android:background="@color/ligh_accent"
                     android:padding="12dp"
                     android:text="@string/edit_phone" />
             </LinearLayout>

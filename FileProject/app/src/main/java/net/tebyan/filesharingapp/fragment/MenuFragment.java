@@ -94,7 +94,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_copy: {
-                Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
                 bundle.putString("type","copy");
@@ -244,6 +244,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                     .setBodyParameter("ps",ps)
                     .setBodyParameter("friendIds",friendIds)
                     .setBodyParameter("fileid",fileID)
+                    .setBodyParameter("shareText","پیغام")
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override

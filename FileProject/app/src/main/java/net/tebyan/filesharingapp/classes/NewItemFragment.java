@@ -325,8 +325,9 @@ public abstract class NewItemFragment extends DialogFragment {
         return dialog;
     }
 
-    public void getFileInfo(String fileID) {
+    public void getFileInfo(String fileID1) {
         if (Utils.isOnline(activity)) {
+            String fileID=fileID1.substring(0,fileID1.length()-1);
             //progress_bar.setVisibility(View.VISIBLE);
             Ion.with(this)
                     .load(WebserviceUrl.GetFileInfo + fileID)

@@ -1,6 +1,7 @@
 package net.tebyan.filesharingapp.classes;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
  * Created by F.piri on 1/20/2016.
  */
 public class Utils {
+    public static long id = 0;
 
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
@@ -89,7 +91,7 @@ public class Utils {
     public static void setFilePublic(final Activity activity, String canEdit, String ps, String fileID /*,String friendIds*/) {
         if (Utils.isOnline(activity)) {
             Ion.with(activity)
-                    .load(WebserviceUrl.FullShareFile + canEdit + WebserviceUrl.ps + ps + WebserviceUrl.FriendId + "" /*friendIds*/ + WebserviceUrl.FileId + fileID+"&shareText=")
+                    .load(WebserviceUrl.FullShareFile + canEdit + WebserviceUrl.ps + ps + WebserviceUrl.FriendId + "" /*friendIds*/ + WebserviceUrl.FileId + fileID + "&shareText=")
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(activity))
                     .asJsonObject()
@@ -124,26 +126,38 @@ public class Utils {
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    public static void downloadFile(final String filename1, String fileId1, final Activity activity) {
-        final String filename = filename1.split(",")[0];
-        final String fileId = fileId1.split(",")[0];
-        final File folder = new File(Environment.getExternalStorageDirectory() + "/TebyanFiles/");
-        if (!folder.isDirectory())
-            folder.mkdir();
-        final ProgressDialog mProgressDialog;
+    public static void downloadFile(final String filename, String fileId, final Activity activity) {
+        final String[] filenames = filename.split(",");
+        final String[] fileIds = fileId.split(",");
+        for(int i=0;i<fileIds.length;i++) {
+            Uri downloadUri = Uri.parse(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileIds[i]);
+            DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/TebyanFiles/", filenames[i]);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            //request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+            request.setAllowedOverRoaming(false);
+            request.setTitle(filenames[i]);
+            request.setDescription(activity.getString(R.string.downloading));
+            String servicestring = Context.DOWNLOAD_SERVICE;
+            DownloadManager downloadManager = (DownloadManager) activity.getSystemService(servicestring);
+            id = downloadManager.enqueue(request);
+        }
+        /*final ProgressDialog mProgressDialog;
         mProgressDialog = new ProgressDialog(activity);
         mProgressDialog.setTitle(activity.getString(R.string.downloading));
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setMax(100);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.show();
         Ion.with(activity)
                 .load(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileId)
-                .progressHandler(new ProgressCallback() {
+                .progressDialog(mProgressDialog)
+                .progress(new ProgressCallback() {
                     @Override
                     public void onProgress(long downloaded, long total) {
-                        //mProgressDialog.setProgress((int) ((float) downloaded / (float) total) * 100);
+                        float percent = (float) downloaded / total;
+                        mProgressDialog.setProgress((int) percent);
                     }
                 })
                 .write(new File(folder + "/" + filename))
@@ -153,12 +167,13 @@ public class Utils {
                         if (e == null) {
                             Toast.makeText(activity, "فایل با موفقیت دانلود شد", Toast.LENGTH_SHORT).show();
                             mProgressDialog.cancel();
-                            openFile(folder + "/" + filename, activity);
+                            openFile(file, activity);
                         } else
                             Toast.makeText(activity, "اشکال در عملیات دانلود", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
     }
+
     public static void shareFile(final String filename1, String fileId1, final Activity activity) {
         final String filename = filename1.split(",")[0];
         final String fileId = fileId1.split(",")[0];
@@ -171,14 +186,14 @@ public class Utils {
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setMax(100);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.show();
         Ion.with(activity)
                 .load(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileId)
                 .progressHandler(new ProgressCallback() {
                     @Override
                     public void onProgress(long downloaded, long total) {
-                        //mProgressDialog.setProgress((int) ((float) downloaded / (float) total) * 100);
+                        mProgressDialog.setProgress((int) ((float) downloaded / (float) total) * 100);
                     }
                 })
                 .write(new File(folder + "/" + filename))
@@ -201,13 +216,12 @@ public class Utils {
         intent.putExtra(Intent.EXTRA_TEXT, "");
         final Uri fileUri;
         fileUri = Uri.parse(path);
-        intent.putExtra(Intent.EXTRA_STREAM,fileUri);
+        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
         intent.setType("*/*");
         activity.startActivity(intent);
     }
 
-    public static void openFile(String filePath, Activity activity) {
-        File file = new File(filePath);
+    public static void openFile(File file, Activity activity) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
         String type = map.getMimeTypeFromExtension(ext);
@@ -244,7 +258,7 @@ public class Utils {
         final HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
         if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
-            Ion.with(activity).load(WebserviceUrl.NewFolderRequest + name + "&folder=" + fragment.currentFolder)
+            Ion.with(activity).load(WebserviceUrl.NewFolderRequest + name + "&folder=" + Application.CurrentFolder)
                     .setHeader("userToken", Application.getToken(activity))
                     .as(GetFileModel.class)
                     .setCallback(new FutureCallback<GetFileModel>() {
@@ -252,7 +266,7 @@ public class Utils {
                         public void onCompleted(Exception e, GetFileModel result) {
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (result.Data != null && result.Error == null && e == null) {
-                                fragment.getFiles("Title", fragment.currentFolder);
+                                fragment.getFiles("Title", Application.CurrentFolder);
                             }
                         }
                     });
@@ -429,12 +443,13 @@ public class Utils {
     public static void addFriend(final Context context) {
         if (Utils.isOnline(context)) {
             JsonArray jsonArray = new JsonArray();
-            int size = getContacts(context).size();
+            ArrayList<Contact> contacts = getContacts(context);
+            int size = contacts.size();
             for (int i = 0; i < size; i++) {
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("FirstName", getContacts(context).get(i).getFirstName());
-                jsonObject.addProperty("LastName", getContacts(context).get(i).getLastName());
-                jsonObject.addProperty("Mobile", getContacts(context).get(i).getNumber());
+                jsonObject.addProperty("FirstName", contacts.get(i).getFirstName());
+                jsonObject.addProperty("LastName", contacts.get(i).getLastName());
+                jsonObject.addProperty("Mobile", contacts.get(i).getNumber());
                 jsonArray.add(jsonObject);
             }
             Ion.with(context)
@@ -481,6 +496,7 @@ public class Utils {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return allContacts;
     }
 

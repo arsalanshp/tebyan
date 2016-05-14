@@ -152,7 +152,7 @@ public class NotificationTickService extends IntentService {
                                     });
                         } else {
                             if (events != null) {
-                                Log.e("error", e.getMessage());
+                                //Log.e("error", e.getMessage());
                                 Toast.makeText(context, R.string.network_connection_fail, Toast.LENGTH_LONG).show();
                                 return;
                             }

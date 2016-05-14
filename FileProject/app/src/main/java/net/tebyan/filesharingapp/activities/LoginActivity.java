@@ -181,9 +181,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (sms.getAddress().contains("8130114114")) {
                     String activationCode = sms.getMsg();
                     _insertCode.setText(activationCode);
-                    // checkActivationCode(activationCode);
+                    //checkActivationCode(activationCode);
                 } else {
-                    // other sms
+
                 }
                 stopSmsRadarService();
             }

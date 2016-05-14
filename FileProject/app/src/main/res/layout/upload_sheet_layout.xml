@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eaeaea"
     android:layout_weight="3"
+    android:background="#ccb5b5b5"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="7dp"
         android:layout_margin="5dp"
-        android:orientation="vertical"
         android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="7dp"
         android:weightSum="3">
 
         <ImageView
@@ -22,25 +22,25 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_file_upload_white_48dp"
-            android:background="@drawable/dialog_button_background_darker_indigo"/>
+            android:src="@drawable/ic_file_upload_white_48dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
             android:layout_margin="5dp"
-            android:text="@string/upload"/>
-        </LinearLayout>
+            android:text="@string/upload"
+            android:textSize="13sp" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="7dp"
         android:layout_margin="5dp"
-        android:orientation="vertical"
         android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="7dp"
         android:weightSum="3">
 
         <ImageView
@@ -48,25 +48,25 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_add_a_photo_white_48dp"
-            android:background="@drawable/dialog_button_background_darker_orange" />
+            android:src="@drawable/ic_add_a_photo_white_48dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
             android:layout_margin="5dp"
-            android:text="@string/upload_image"/>
+            android:text="@string/upload_image"
+            android:textSize="13sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="7dp"
         android:layout_margin="5dp"
-        android:orientation="vertical"
         android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="7dp"
         android:weightSum="3">
 
         <ImageView
@@ -74,14 +74,13 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_create_new_folder_white_48dp"
-            android:background="@drawable/dialog_button_background_darker_green" />
+            android:src="@drawable/ic_create_new_folder_white_48dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
             android:layout_margin="5dp"
-            android:text="@string/folder"/>
+            android:text="@string/folder"
+            android:textSize="13sp" />
     </LinearLayout>
 </LinearLayout>

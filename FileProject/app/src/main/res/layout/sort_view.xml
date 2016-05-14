@@ -47,5 +47,18 @@
             android:textColor="#404040"
             android:textSize="17sp" />
 
+
+        <RadioButton
+            android:id="@+id/radio_sort_by_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="7dp"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:gravity="right|center_vertical"
+            android:text="@string/sort_by_size"
+            android:textColor="#404040"
+            android:textSize="17sp" />
     </RadioGroup>
 </LinearLayout>

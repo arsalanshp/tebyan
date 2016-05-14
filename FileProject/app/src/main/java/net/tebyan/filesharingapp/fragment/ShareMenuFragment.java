@@ -23,6 +23,7 @@ import com.koushikdutta.ion.Ion;
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
+import net.tebyan.filesharingapp.classes.NewItemFragment;
 import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FriendData;
@@ -33,11 +34,11 @@ import java.util.ArrayList;
 /**
  * Created by v.karimi on 5/8/2016.
  */
-public class ShareMenuFragment extends BottomSheetDialogFragment implements View.OnClickListener {
+public class ShareMenuFragment extends BottomSheetDialogFragment implements View.OnClickListener,NewItemFragment.OnNewFolderListener {
     public String selected;
     private String fileNames;
     String friendIds = "";
-    public TextView txtDownload, txtInfo, txtDeShare ,txtCopy;
+    public TextView txtDownload, txtInfo, txtDeShare, txtCopy;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
 
@@ -84,7 +85,7 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
-                bundle.putString("type","copy");
+                bundle.putString("type", "copy");
                 bundle.putString("index", selected);
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
@@ -96,11 +97,13 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 break;
             }
             case R.id.txt_info: {
-                Utils.deleteFile(selected, getActivity(),"home");
+                NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
+                //Utils.deleteFile(selected, getActivity(), "home");
                 break;
             }
             case R.id.txt_de_share: {
-                Utils.favoriteFile(selected,getActivity());
+                //Utils.favoriteFile(selected,getActivity());
+
                 break;
             }
 
@@ -112,9 +115,14 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
         NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 1, getActivity());
     }
 
+    @Override
+    public void onNewFolder(String name) {
+
+    }
+
 
     public interface ShowMenu {
-        void showContextMenu(String fileIds, String fileNames,int type);
+        void showContextMenu(String fileIds, String fileNames, int type);
     }
 
     @Override
@@ -129,6 +137,7 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
     public void getFriendsForShareFile(String fileIdClicked) {
         if (Utils.isOnline(getActivity())) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
@@ -172,12 +181,13 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                     }
                 }
                 if (friendIds.length() > 0)
-                    shareWith("false", "2",selected.substring(0,selected.length()-1), friendIds.substring(0, friendIds.length() - 1));
+                    shareWith("false", "2", selected.substring(0, selected.length() - 1), friendIds.substring(0, friendIds.length() - 1));
                 dialog.cancel();
             }
         });
         user.show();
     }
+
     public void shareWith(String canEdit, String ps, String fileID, String friendIds) {
         if (Utils.isOnline(getActivity())) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
@@ -186,9 +196,9 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(getActivity()))
                     .setBodyParameter("canEdit", canEdit)
-                    .setBodyParameter("ps",ps)
-                    .setBodyParameter("friendIds",friendIds)
-                    .setBodyParameter("fileid",fileID)
+                    .setBodyParameter("ps", ps)
+                    .setBodyParameter("friendIds", friendIds)
+                    .setBodyParameter("fileid", fileID)
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override

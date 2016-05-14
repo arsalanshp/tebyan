@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView profile_menu_pic;
     FloatingActionButton fab;
     Button notifCount;
-    private int SELECT_IMAGE_CODE = 1;
+    private static int SELECT_IMAGE_CODE = 1;
     private int SELECT_FILM_CODE = 3;
     private int sizeOfPhotos;
     private boolean deletedFiles = false;
@@ -238,15 +240,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (getSupportFragmentManager().getBackStackEntryCount() >1)
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1)
                 getSupportFragmentManager().popBackStack();
             else {
                 HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
-                if(Application.ParrentFolder!=null) {
+                if (Application.ParrentFolder != null) {
                     homeFragment.getFiles("Title", Application.ParrentFolder);
-                }else {
-                super.onBackPressed();
-                finish();}
+                } else {
+                    super.onBackPressed();
+                    finish();
+                }
             }
 
         }
@@ -304,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (this.uploadFiles != null && !this.uploadFiles.isEmpty()) {
                 this.sizeOfPhotos = this.uploadFiles.size();
                 this.indexInPhotos = this.sizeOfPhotos - 1;
-                uploadPic(this.uploadFiles, this.indexInPhotos);
+                uploadPic(this.uploadFiles, this.indexInPhotos, Application.CurrentFolder);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -379,7 +382,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void getTokenByDevice(final Activity activity) {
         Ion.with(activity)
-                .load(WebserviceUrl.GetTokenByDevice).setTimeout(1000000000)
+                .load(WebserviceUrl.GetTokenByDevice + ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId().toString())
+                .setTimeout(1000000000)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
@@ -571,14 +575,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
-    public void uploadPic(List<PhotoModel> files, int index) {
+    public void uploadPic(List<PhotoModel> files, int index, final String currentFolder) {
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
         /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
         File file = new File(files.get(index).getOriginalPath());
         Ion.with(this)
-                .load(WebserviceUrl.UploadServiceUrl + "?folder=" + Application.CurrentFolder.trim())
+                .load(WebserviceUrl.UploadServiceUrl + "?folder=" + currentFolder.trim())
                 .setHeader("userToken", Application.getToken(this))
                 .setMultipartParameter("name", "test")
                 .setMultipartParameter("filename", file.getName().trim())
@@ -602,7 +606,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                             if (activity.indexInPhotos > 0) {
                                 activity.indexInPhotos--;
-                                activity.uploadPic(activity.uploadFiles, activity.indexInPhotos);
+                                uploadPic(uploadFiles, indexInPhotos, currentFolder);
                             } else {
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
                             }
@@ -985,6 +989,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.frame, fragment, tag);
         fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
+    }
+
+    public void startPhotoSelector() {
+        Intent intent = new Intent(this, PhotoSelectorActivity.class);
+        intent.putExtra(PhotoSelectorActivity.KEY_MAX, 1);
+        startActivityForResult(intent, SELECT_IMAGE_CODE);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
     }
 
     public interface RefreshDirectory {

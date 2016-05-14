@@ -17,7 +17,7 @@
             android:title="@string/shared" />
         <item
             android:id="@+id/nav_favorite"
-            android:icon="@drawable/ic_home_black_24dp"
+            android:icon="@android:drawable/star_big_off"
             android:title="@string/favorite_menu" />
         <item
             android:id="@+id/deleted"

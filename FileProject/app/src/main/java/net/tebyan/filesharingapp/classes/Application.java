@@ -3,6 +3,7 @@ package net.tebyan.filesharingapp.classes;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 
 /**
  * Created by F.piri on 1/17/2016.
