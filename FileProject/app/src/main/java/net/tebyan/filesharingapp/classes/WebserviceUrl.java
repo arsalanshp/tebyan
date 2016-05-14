@@ -29,6 +29,7 @@ public class WebserviceUrl {
     public static String CopyFile = RepositoryServiceUrl + "Copy?id=";
     public static String MoveFile = RepositoryServiceUrl + "Move?id=";
     public static String Delete = RepositoryServiceUrl + "Delete";
+    public static String UnStar = RepositoryServiceUrl + "UnStar";
     public static String ZipFile = RepositoryServiceUrl + "ZipFile";
     public static String UnZipFile = RepositoryServiceUrl + "UnZipFile";
     public static String GetFileInfo = RepositoryServiceUrl + "GetFileInfo?fileId=";

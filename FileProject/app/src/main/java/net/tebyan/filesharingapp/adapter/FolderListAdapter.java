@@ -180,7 +180,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                 deletedFragment.setHandler(this);
             }
             this.imgShared = (ImageView) view.findViewById(R.id.img_share);
-            this.imgThumbnail = (ImageView) view.findViewById(R.id.img_thumbnail);
+            this.imgThumbnail = (ImageView) view.findViewById(R.id.img_type);
             if (imgMore != null) {
                 imgMore.setOnClickListener(this);
             }

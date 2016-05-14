@@ -126,6 +126,7 @@ public class Utils {
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
+
     public static void downloadFile(final String filename, String fileId, final Activity activity) {
         final String[] filenames = filename.split(",");
         final String[] fileIds = fileId.split(",");
@@ -439,7 +440,43 @@ public class Utils {
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
+    public static void unStar(String fileID1, final FragmentActivity activity) {
+        if (Utils.isOnline(activity)) {
+            String fileID = fileID1.substring(0, fileID1.length() - 1);
+            final ProgressDialog mProgressDialog;
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setTitle(activity.getString(R.string.delete));
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.show();
+            JsonObject json = new JsonObject();
+            json.addProperty("fileId", fileID);
+            Ion.with(activity)
+                    .load(WebserviceUrl.UnStar)
+                    .setTimeout(1000000000)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
+                                    HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("favorite");
+                                    fragment.getStaredFiles();
+                                    Toast.makeText(activity, R.string.file_is_deleted, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
+                    });
+        } else
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
     public static void addFriend(final Context context) {
         if (Utils.isOnline(context)) {
             JsonArray jsonArray = new JsonArray();
