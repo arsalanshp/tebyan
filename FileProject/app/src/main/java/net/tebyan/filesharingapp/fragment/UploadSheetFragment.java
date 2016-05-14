@@ -104,7 +104,16 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 break;
             }
             case R.id.img_upload_file: {
-                /*Utils.zipFile(selected, getActivity(),"favorite");*/
+                Intent i = new Intent(getActivity(), FilePickerActivity.class);
+                AbstractFilePickerActivity.isClip = false;
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, true);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+                i.putExtra(FilePickerActivity.EXTRA_TYPE, "/");
+                getActivity().startActivityForResult(i, SELECT_FILM_CODE);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                dismiss();
                 break;
             }
 
