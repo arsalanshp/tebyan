@@ -66,11 +66,11 @@
 
                     <ImageView
                         android:id="@+id/img_more"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:layout_margin="5dp"
-                        android:scaleType="centerCrop"
+                        android:scaleType="center"
                         android:src="@drawable/ic_more_vert_black_24dp" />
 
 
