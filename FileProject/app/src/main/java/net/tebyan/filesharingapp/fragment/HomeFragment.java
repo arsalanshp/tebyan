@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -53,6 +54,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public GetFileModel_ data;
     public String token;
     public Activity activity;
+    public String title;
     public GridLayoutManager manager;
     //public String currentFolder;
     public MainActivity.RefreshDirectory handler;
@@ -77,6 +79,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         token = Application.getToken(getActivity());
         return view;
     }
+
 
     public void setHandler(MainActivity.SelectedItems handler) {
         this.selectHandler = handler;
@@ -104,19 +107,23 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         setNewAdapter(type);
         switch (type) {
             case 0: {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
                 getFiles("", "");
                 break;
             }
             case 1: {
-                getSharedWithMe();
+                getSharedWithMe("Title");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.sharePeople));
                 break;
             }
             case 2: {
-                getDeletedFiles();
+                getDeletedFiles("Title");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.deleted));
                 break;
             }
             case 3: {
-                getStaredFiles();
+                getStaredFiles("Title");
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.favorite_menu));
                 break;
             }
 
@@ -125,6 +132,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     public void setNewAdapter(int type) {
+        listAdapter=new FolderListAdapter(getActivity(),data,type);
         adapter = new FolderAdapter(getActivity(), data, type);
         adapter.setHandler(this);
         adapter.setRefreshHandler(this);
@@ -313,20 +321,73 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int type = getArguments().getInt("type");
                 switch (i) {
                     case R.id.radio_sort_by_name: {
                         ad.cancel();
-                        getFiles("Title", Application.CurrentFolder);
+                        switch (type) {
+                            case 0: {
+                                getFiles("Title", Application.CurrentFolder);
+                                break;
+                            }
+                            case 1: {
+                                getSharedWithMe("Title");
+                                break;
+                            }
+                            case 2: {
+                                getDeletedFiles("Title");
+                                break;
+                            }
+                            case 3: {
+                                getStaredFiles("Title");
+                                break;
+                            }
+                        }
+
                         break;
                     }
                     case R.id.radio_sort_by_date: {
                         ad.cancel();
-                        getFiles("Createdate", Application.CurrentFolder);
+                        switch (type) {
+                            case 0: {
+                                getFiles("Createdate", Application.CurrentFolder);
+                                break;
+                            }
+                            case 1: {
+                                getSharedWithMe("Createdate");
+                                break;
+                            }
+                            case 2: {
+                                getDeletedFiles("Createdate");
+                                break;
+                            }
+                            case 3: {
+                                getStaredFiles("Createdate");
+                                break;
+                            }
+                        }
                         break;
                     }
                     case R.id.radio_sort_by_size: {
                         ad.cancel();
-                        getFiles("Size", Application.CurrentFolder);
+                        switch (type) {
+                            case 0: {
+                                getFiles("Size", Application.CurrentFolder);
+                                break;
+                            }
+                            case 1: {
+                                getSharedWithMe("Size");
+                                break;
+                            }
+                            case 2: {
+                                getDeletedFiles("Size");
+                                break;
+                            }
+                            case 3: {
+                                getStaredFiles("Size");
+                                break;
+                            }
+                        }
                         break;
                     }
                 }
@@ -357,15 +418,20 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                             ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
                             if (result != null) {
                                 pos = addHeaders(result);
-                                if (result.Data != null && result.Error == null && e == null) {
-                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                        Application.ParrentFolder = "";
-                                    else
-                                        Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-
+                            /*    if (result.Data != null && result.Error == null && e == null) {
+                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FileID == null) {
+                                        Application.CurrentFolder = "";
+                                        Application.ParrentFolder = null;
+                                    }
+                                    else {
+                                        if (Application.ParrentFolder == null) {
+                                            Application.CurrentFolder = result.Data.Navigate.get(0).FileID;
+                                            Application.ParrentFolder="";
+                                        }
+                                        Application.ParrentFolder = result.Data.Navigate.get(0).FileID;
+                                    }
                                     // setAdapter(type);
-                                } else
-                                    Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                                } */
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -404,6 +470,10 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 listAdapter.data = data;
             }
             adapter.data = data;
+            if(listAdapter!=null){
+                listAdapter.data = data;
+                listAdapter.notifyDataSetChanged();
+            }
             adapter.notifyDataSetChanged();
         }
         return headerPosition;
@@ -440,21 +510,27 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     @Override
-    public void refreshFile(String currentFolder) {
+    public void refreshFile(String currentFolder,String currentFolderName) {
         if (currentFolder.equals("")) {
             Application.ParrentFolder = null;
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("lld");
 
         } else {
             Application.ParrentFolder = Application.CurrentFolder;
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(currentFolderName);
         }
         Application.CurrentFolder = currentFolder;
         getFiles("Title", currentFolder);
     }
 
-    public void getSharedWithMe() {
+    public void getSharedWithMe(String sortBy) {
         if (Utils.isOnline(getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(this).load(WebserviceUrl.GetSharedFilesWithMe)
+            String url = WebserviceUrl.GetSharedFilesWithMe+Application.CurrentFolder;
+            if (sortBy != null && !sortBy.isEmpty()) {
+                url += "&orderBy=" + sortBy + "&sortOrder=ASC";
+            }
+            Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(activity))
                     .setBodyParameter("folderId", "")
                     .setBodyParameter("pageIndex", "0")
@@ -480,10 +556,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    public void getDeletedFiles() {
+    public void getDeletedFiles(String sortBy) {
         if (Utils.isOnline(getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(this).load(WebserviceUrl.GetDeletedFiles)
+            String url = WebserviceUrl.GetDeletedFiles+Application.CurrentFolder;
+            if (sortBy != null && !sortBy.isEmpty()) {
+                url += "&orderBy=" + sortBy + "&sortOrder=ASC";
+            }
+            Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(getActivity()))
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
@@ -504,10 +584,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
-    public void getStaredFiles() {
+    public void getStaredFiles(String sortBy) {
         if (Utils.isOnline(getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(this).load(WebserviceUrl.GetStaredFiles)
+            String url = WebserviceUrl.GetStaredFiles+Application.CurrentFolder;
+            if (sortBy != null && !sortBy.isEmpty()) {
+                url += "&orderBy=" + sortBy + "&sortOrder=ASC";
+            }
+            Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(getActivity()))
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
@@ -553,6 +637,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                                 fileSearched = "";
                                 data = result;
                                 adapter.data = result;
+                                if(listAdapter!=null){
+                                    listAdapter.data=data;
+                                }
                                 adapter.notifyDataSetChanged();
                             }
                         });

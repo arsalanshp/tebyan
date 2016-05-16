@@ -138,7 +138,7 @@ public class PasteAdapter extends RecyclerView.Adapter<PasteAdapter.CustomViewHo
         public void onClick(View view) {
             if (data.Data.Files.get(getLayoutPosition()).IsFolder) {
                 /*Utils.reloadMainActivity(data.Data.Files.get(getLayoutPosition()).FileID, activity);*/
-                handler.refreshFile(data.Data.Files.get(getLayoutPosition()).FileID);
+                handler.refreshFile(data.Data.Files.get(getLayoutPosition()).FileID,data.Data.Files.get(getAdapterPosition()).Title);
             }
         }
     }

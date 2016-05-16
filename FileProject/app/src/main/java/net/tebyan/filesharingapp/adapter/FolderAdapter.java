@@ -248,7 +248,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
                         }
                     } else {
 
-                        refreshHandler.refreshFile(data.Data.Files.get(getAdapterPosition()).FileID);
+                        refreshHandler.refreshFile(data.Data.Files.get(getAdapterPosition()).FileID,data.Data.Files.get(getAdapterPosition()).Title);
                     }
                 }
             }

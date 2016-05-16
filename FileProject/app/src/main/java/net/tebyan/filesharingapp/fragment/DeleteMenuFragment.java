@@ -65,6 +65,7 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_delete_move: {
+                this.dismiss();
                 Toast.makeText(getContext(), R.string.cut, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
@@ -77,10 +78,12 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
                 break;
             }
             case R.id.txt_restore: {
+                this.dismiss();
                 Utils.RestoreFile(selected.substring(0,selected.length()-1), getActivity());
                 break;
             }
             case R.id.txt_delete: {
+                this.dismiss();
                Utils.deleteConfirm(selected.substring(0, selected.length() - 1), getActivity());
                 break;
             }

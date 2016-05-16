@@ -97,6 +97,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_copy: {
+                this.dismiss();
                 //Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
@@ -108,10 +109,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 break;
             }
             case R.id.txt_download: {
+                this.dismiss();
                 Utils.downloadFile(fileNames, selected, getActivity());
                 break;
             }
             case R.id.txt_share_link: {
+                this.dismiss();
                 String url= WebserviceUrl.DownloadFile + Application.getToken(getActivity()) + WebserviceUrl.FileIdDownload +selected.substring(0,selected.length()-1);
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
@@ -121,10 +124,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 break;
             }
             case R.id.txt_rename: {
+                this.dismiss();
                 renameFile();
                 break;
             }
             case R.id.txt_move: {
+                this.dismiss();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
                 bundle.putString("type","cut");
@@ -136,11 +141,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 break;
             }
             case R.id.txt_send_file:{
+                this.dismiss();
                 Utils.shareFile(fileNames, selected, getActivity());
                 break;
             }
 
         case R.id.txt_info:{
+            this.dismiss();
             String selectArray[]=selected.split(",");
             if(selectArray.length>1){
                 Toast.makeText(getActivity(),getString(R.string.info_error),Toast.LENGTH_LONG).show();
@@ -150,10 +157,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 break;
         }
             case R.id.txt_add_people:{
+                this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
                 break;
             }
             case R.id.txt_zip: {
+                this.dismiss();
                 String extension=fileNames.substring(fileNames.length() - 4);
                 String arrZip[]=fileNames.split(",");
                 if(extension.trim().equals("zip,")) {
@@ -168,10 +177,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 break;
             }
             case R.id.txt_remove: {
+                this.dismiss();
                 Utils.deleteFile(selected, getActivity(), "home");
                 break;
             }
             case R.id.txt_favorite: {
+                this.dismiss();
             Utils.favoriteFile(selected,getActivity());
                 break;
             }

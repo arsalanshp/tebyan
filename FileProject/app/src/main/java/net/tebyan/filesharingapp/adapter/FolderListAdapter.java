@@ -218,7 +218,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                 imgTick.setVisibility(View.VISIBLE);
                 handler.showContextMenu(getSelectedItems(), getFileNames(),type);
             } else {
-                if (data.Data.Files.size()>0&&!data.Data.Files.get(getAdapterPosition()).IsFolder) {
+                if (!data.Data.Files.get(getAdapterPosition()).IsFolder) {
                     if (imgTick != null) {
                         if (selectedItems.get(getAdapterPosition(), false)) {
                             selectedItems.delete(getAdapterPosition());
@@ -245,7 +245,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                         }
                     } else {
 
-                        refreshHandler.refreshFile(data.Data.Files.get(getAdapterPosition()).FileID);
+                        refreshHandler.refreshFile(data.Data.Files.get(getAdapterPosition()).FileID,data.Data.Files.get(getAdapterPosition()).Title);
                     }
                 }
             }

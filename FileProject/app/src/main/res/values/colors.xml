@@ -6,8 +6,8 @@
     <color name="very_light_accent">#889da7</color>
     <color name="ligh_accent">#849fac</color>
     <color name="accent">#cccccc</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
+    <color name="primary_text">#000000</color>
+    <color name="secondary_text">#fa1b1b1b</color>
     <color name="icons">#212121</color>
     <color name="divider">#dddddd</color>
     <color name="bg">#ff65bbf6</color>

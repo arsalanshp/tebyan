@@ -243,7 +243,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().popBackStack();
             else {
                 HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
-                if (Application.ParrentFolder != null) {
+                if (Application.CurrentFolder != "") {
+                    Application.CurrentFolder=Application.ParrentFolder;
                     homeFragment.getFiles("Title", Application.ParrentFolder);
                 } else {
                     super.onBackPressed();
@@ -360,17 +361,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                              getTokenByDevice(activity);
                                              //logout();
                                          }
-                                         if (fileSearched != null && !fileSearched.equals("")) {
-                                             toolbar.setTitle("#" + fileSearched);
-                                             searchFile(fileSearched);
-                                         } else if (sharedWithMe) {
-                                             toolbar.setTitle(R.string.shared);
-                                             getSharedWithMe();
-                                         } else if (deletedFiles) {
-                                             toolbar.setTitle(R.string.deleted);
-                                             getDeletedFiles();
-                                         } else if (!deletedFiles)
-                                             return;
+
                                              /*getFiles();*/
                                      }
                                  }
@@ -825,104 +816,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
-
-    public void getFriendsForShareFile_(String fileIdClicked) {
-        if (Utils.isOnline(activity)) {
-            progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(activity)
-                    .load(WebserviceUrl.GetFriendsForShareFile + fileIdClicked)
-                    .setTimeout(100000000)
-                    .setHeader("userToken", token)
-                    .as(JsonObject.class)
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            if (e == null) {
-                                progress_bar.setVisibility(View.GONE);
-
-                            }
-                        }
-                    });
-        } else
-            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-    }
-
-
-    public void getDeletedFiles() {
-        if (Utils.isOnline(this)) {
-            progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(this).load(WebserviceUrl.GetDeletedFiles + Application.CurrentFolder)
-                    .setHeader("userToken", token)
-                    .as(GetFileModel_.class)
-                    .setCallback(new FutureCallback<GetFileModel_>() {
-                        @Override
-                        public void onCompleted(Exception e, GetFileModel_ result) {
-                            progress_bar.setVisibility(View.GONE);
-                            if (result.Data != null && result.Error == null && e == null) {
-                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                    Application.ParrentFolder = "";
-                                else
-                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-
-                                data = result;
-                                adapter.data = result;
-                                adapter.notifyDataSetChanged();
-
-                            } else
-                                Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else
-            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-    }
-
-    public void getSharedWithMe() {
-        if (Utils.isOnline(this)) {
-            progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(this).load(WebserviceUrl.GetSharedFilesWithMe + Application.CurrentFolder)
-                    .setHeader("userToken", token)
-                    .as(GetFileModel_.class)
-                    .setCallback(new FutureCallback<GetFileModel_>() {
-                        @Override
-                        public void onCompleted(Exception e, GetFileModel_ result) {
-                            progress_bar.setVisibility(View.GONE);
-                            if (result.Data != null && result.Error == null && e == null) {
-                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                    Application.ParrentFolder = "";
-                                else
-                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
-                                data = result;
-                                adapter.data = result;
-                                adapter.notifyDataSetChanged();
-                            } else
-                                Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else
-            Toast.makeText(this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-    }
-
-    public void shareWith(String canEdit, String ps, String fileID, String friendIds) {
-        if (Utils.isOnline(activity)) {
-            progress_bar.setVisibility(View.VISIBLE);
-            Ion.with(activity)
-                    .load(WebserviceUrl.FullShareFile + canEdit + WebserviceUrl.ps + ps + WebserviceUrl.FriendId + friendIds + WebserviceUrl.FileId + fileID)
-                    .setTimeout(1000000000)
-                    .setHeader("userToken", Application.getToken(activity))
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            progress_bar.setVisibility(View.GONE);
-                            if (e == null && result.get("Error").toString().equals("null")) {
-                                Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        } else
-            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-    }
-
     public void pasteFile() {
         if (Application.fileCopied) {
             Application.fileCopied = false;
@@ -999,7 +892,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public interface RefreshDirectory {
-        void refreshFile(String currentFolder);
+        void refreshFile(String currentFolder,String currentFolderName);
     }
 
     public interface PasteConfirm {
