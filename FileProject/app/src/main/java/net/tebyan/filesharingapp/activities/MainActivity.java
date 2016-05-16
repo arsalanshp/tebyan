@@ -123,19 +123,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void onClickView() {
-        relFrgTab.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(activity, "Toast", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 initUploadMenu();
-             /* alertDialog.show();*/
             }
         });
     }
@@ -244,9 +235,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             else {
                 HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
                 if (Application.CurrentFolder != "") {
-                    /*Application.CurrentFolder=Application.ParrentFolder;*/
+                    Application.CurrentFolder=Application.ParrentFolder;
                     homeFragment.getFiles("Title", Application.ParrentFolder);
-
                 } else {
                     super.onBackPressed();
                     finish();

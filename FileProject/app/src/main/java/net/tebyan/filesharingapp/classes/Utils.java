@@ -226,7 +226,7 @@ public class Utils {
         activity.startActivity(intent);
     }
 
-    private static String getMimeType(File file) {
+    public static String getMimeType(File file) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
         String type = map.getMimeTypeFromExtension(ext);
