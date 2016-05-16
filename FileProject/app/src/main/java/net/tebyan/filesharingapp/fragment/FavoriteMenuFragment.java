@@ -85,14 +85,17 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_un_star: {
+                this.dismiss();
              Utils.unStar(selected,getActivity());
                 break;
             }
             case R.id.txt_download: {
+                this.dismiss();
                 Utils.downloadFile(fileNames, selected.substring(0, selected.length() - 1), getActivity());
                 break;
             }
             case R.id.txt_share_link: {
+                this.dismiss();
                 String url= WebserviceUrl.DownloadFile + Application.getToken(getActivity()) + WebserviceUrl.FileIdDownload +selected.substring(0,selected.length()-1);
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
@@ -102,10 +105,12 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
                 break;
             }
             case R.id.txt_send_file:{
+                this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
                 break;
             }
             case R.id.txt_remove: {
+                this.dismiss();
                 Utils.deleteFile(selected, getActivity(), "favorite");
                 break;
             }
@@ -113,7 +118,6 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
     }
 
     private void renameFile() {
-
         NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 1, getActivity());
     }
 

@@ -19,7 +19,7 @@ public class WebserviceUrl {
     public static String GetAccountInfo = AccountServiceUrl + "GetAccountInfo";
     public static String NewFolderRequest = RepositoryServiceUrl + "NewFolder?name=";
     public static String GetFiles = RepositoryServiceUrl + "GetFiles?mode=Drive&folder=";
-    public static String GetDeletedFiles = RepositoryServiceUrl + "GetFiles?mode=Trash&folder=";
+    public static String GetDeletedFiles = RepositoryServiceUrl + "GetFiles?mode=Trash&folderId=";
     public static String GetSharedFilesWithMe = RepositoryServiceUrl + "GetFiles?mode=ShareMe&folderId=";
     public static String GetStaredFiles = RepositoryServiceUrl + "GetFiles?mode=Stars&folder=";
     public static String staredFiles = RepositoryServiceUrl + "Star";
@@ -36,7 +36,7 @@ public class WebserviceUrl {
     public static String GetFriends = SiteUrl + "/api/Account/GetFriends";
     public static String AddFriends = SiteUrl + "/api/Account/AddFriend";
     public static String AddFriend = SiteUrl + "/api/Account/AddFriend?firstName=";
-    public static String FullShareFile = SiteUrl + "/api/Repository/" + "FullShareFile?";
+    public static String FullShareFile = SiteUrl + "/api/Repository/" + "FullShareFile";
     public static String GetFriendsForShareFile = SiteUrl + "/api/Account/GetFriendsForShareFile?fileId=";
     public static String SearchFile = RepositoryServiceUrl + "GetFiles?mode=SearchFile&folder=";
     public static String BuyStorage = SiteUrl + "/Common/BuySpace";

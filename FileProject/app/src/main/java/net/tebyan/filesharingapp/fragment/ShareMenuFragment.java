@@ -82,6 +82,7 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txt_copy: {
+                this.dismiss();
                 Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
@@ -93,15 +94,18 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 break;
             }
             case R.id.txt_download: {
+                this.dismiss();
                 Utils.downloadFile(fileNames, selected, getActivity());
                 break;
             }
             case R.id.txt_info: {
+                this.dismiss();
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
                 //Utils.deleteFile(selected, getActivity(), "home");
                 break;
             }
             case R.id.txt_de_share: {
+                this.dismiss();
                 //Utils.favoriteFile(selected,getActivity());
 
                 break;

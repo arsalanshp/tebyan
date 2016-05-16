@@ -307,11 +307,11 @@ public class Utils {
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getStaredFiles();
+                                        fragment.getStaredFiles("Title");
                                     }
                                     if (tag == "deleted") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getDeletedFiles();
+                                        fragment.getDeletedFiles("Title");
                                     }
                                     Toast.makeText(activity, R.string.file_is_deleted, Toast.LENGTH_SHORT).show();
                                 } else
@@ -429,7 +429,7 @@ public class Utils {
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getStaredFiles();
+                                        fragment.getStaredFiles("Title");
                                     }
                                     Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
                                 } else
@@ -466,7 +466,7 @@ public class Utils {
                             if (e == null) {
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("favorite");
-                                    fragment.getStaredFiles();
+                                    fragment.getStaredFiles("Title");
                                     Toast.makeText(activity, R.string.file_is_deleted, Toast.LENGTH_SHORT).show();
                                 } else
                                     Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
@@ -614,7 +614,7 @@ public class Utils {
                             if (e == null) {
                                 Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
                                 HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("deleted");
-                                fragment.getDeletedFiles();
+                                fragment.getDeletedFiles("Title");
                             }
                         }
                     });
@@ -647,7 +647,7 @@ public class Utils {
                             if (e == null) {
                                 Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
                                 HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("deleted");
-                                fragment.getDeletedFiles();
+                                fragment.getDeletedFiles("Title");
                             }
                         }
                     });
@@ -685,7 +685,7 @@ public class Utils {
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getStaredFiles();
+                                        fragment.getStaredFiles("Title");
                                     }
                                     Toast.makeText(activity, R.string.un_zip, Toast.LENGTH_SHORT).show();
                                 } else

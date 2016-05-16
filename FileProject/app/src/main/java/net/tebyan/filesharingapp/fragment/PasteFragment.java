@@ -142,7 +142,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     }
 
     @Override
-    public void refreshFile(String currentFolder) {
+    public void refreshFile(String currentFolder,String currentFolderTitle) {
         this.currentFolder = currentFolder;
         getFiles("Title", currentFolder);
         initCopy(selected,currentFolder);
@@ -201,11 +201,12 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getStaredFiles();
+                                        fragment.getStaredFiles("Title");
                                     }
                                     if (tag == "deleted") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getDeletedFiles();
+                                        fragment.getDeletedFiles("Title");
+
                                     }
                                     Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
                                 } else

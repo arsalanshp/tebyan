@@ -22,9 +22,8 @@
         <item name="android:typeface">serif</item>
         <item name="android:windowBackground">@color/primary</item>
         <item name="colorControlNormal">@color/primary_text</item>
-        <item name="colorControlActivated">@color/accent</item>
-        <item name="colorControlHighlight">@color/accent</item>
-
+        <item name="colorControlActivated">@color/primary_text</item>
+        <item name="colorControlHighlight">@color/primary_light</item>
         <item name="colorButtonNormal">@color/primary_light</item>
     </style>
 
