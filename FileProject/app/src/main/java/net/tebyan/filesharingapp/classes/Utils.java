@@ -239,7 +239,7 @@ public class Utils {
     public static void rename_File(String fileID1, String newName, final FragmentActivity activity) {
         if (Utils.isOnline(activity)) {
             MenuFragment fragment = (MenuFragment) activity.getSupportFragmentManager().findFragmentByTag("menuFragment");
-            String fileID = fragment.selected.substring(0, fragment.selected.length() - 1);
+            String fileID = fileID1.substring(0, fileID1.length() - 1);
             Ion.with(activity)
                     .load(WebserviceUrl.RenameFile + fileID + WebserviceUrl.NewName + newName)
                     .setTimeout(100000000)

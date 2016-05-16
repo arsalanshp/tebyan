@@ -1,5 +1,6 @@
 package net.tebyan.filesharingapp.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
 import net.tebyan.filesharingapp.classes.NewItemFragment;
@@ -38,6 +41,9 @@ import java.util.ArrayList;
 public class MenuFragment extends BottomSheetDialogFragment implements View.OnClickListener,NewItemFragment.OnNewFolderListener {
     public String selected;
     private String fileNames;
+    public Activity activity;
+    public LinearLayout shareLayout,renameLayout;
+    public MainActivity.deSelectedItems handler;
     String friendIds = "";
     public TextView txtDownload, txtShareLink, txtSendFile, txtAddPeople, txtMove, txtRename,txtInfo, txtRemove, txtCopy, txtFavorite,txtZip;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
@@ -51,12 +57,22 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
         }
 
+
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
 
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity=activity;
+    }
+
+    public void setHandler(MainActivity.deSelectedItems handler){
+        this.handler=handler;
+    }
     @Override
     public void setupDialog(Dialog dialog, int style) {
 
@@ -84,12 +100,23 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
         txtRemove.setOnClickListener(this);
         txtCopy = (TextView) contentView.findViewById(R.id.txt_copy);
         txtCopy.setOnClickListener(this);
+        shareLayout= (LinearLayout) contentView.findViewById(R.id.share_file_layout);
+        renameLayout= (LinearLayout) contentView.findViewById(R.id.rename_layout);
+        initMultiSelectedMenu();
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
 
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
+        }
+    }
+
+    private void initMultiSelectedMenu() {
+        String []selectArray=selected.split(",");
+        if(selectArray.length>1){
+            shareLayout.setVisibility(View.GONE);
+            renameLayout.setVisibility(View.GONE);
         }
     }
 
@@ -106,6 +133,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
@@ -121,11 +149,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 i.putExtra(Intent.EXTRA_SUBJECT, "آدرس دانلود");
                 i.putExtra(Intent.EXTRA_TEXT, url);
                 startActivity(Intent.createChooser(i, "Share URL"));
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_rename: {
                 this.dismiss();
                 renameFile();
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_move: {
@@ -138,11 +168,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_send_file:{
                 this.dismiss();
                 Utils.shareFile(fileNames, selected, getActivity());
+                handler.clearAllItems();
                 break;
             }
 
@@ -154,11 +186,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }else {
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
             }
+            handler.clearAllItems();
                 break;
         }
             case R.id.txt_add_people:{
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_zip: {
@@ -174,16 +208,19 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 }else{
                     Utils.zipFile(selected.substring(0,selected.length()-1), getActivity(),"home");
                 }
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_remove: {
                 this.dismiss();
                 Utils.deleteFile(selected, getActivity(), "home");
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_favorite: {
                 this.dismiss();
             Utils.favoriteFile(selected,getActivity());
+                handler.clearAllItems();
                 break;
             }
 
@@ -192,7 +229,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
     private void renameFile() {
 
-        NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 1, getActivity());
+        NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(),this, 1, getActivity(), selected,"");
     }
 
     @Override
@@ -248,7 +285,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
         for (int i = 0; i < friends.size(); i++) {
             name[i] = friends.get(i).FirstName + " " + friends.get(i).LastName;
         }
-        AlertDialog.Builder user = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder user = new AlertDialog.Builder(activity);
         user.setTitle(R.string.contacts);
         user.setMultiChoiceItems(name, bl, new DialogInterface.OnMultiChoiceClickListener() {
             @Override

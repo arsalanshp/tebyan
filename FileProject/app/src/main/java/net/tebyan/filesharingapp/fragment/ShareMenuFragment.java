@@ -21,6 +21,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
 import net.tebyan.filesharingapp.classes.NewItemFragment;
@@ -38,6 +39,7 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
     public String selected;
     private String fileNames;
     String friendIds = "";
+    public MainActivity.deSelectedItems handler;
     public TextView txtDownload, txtInfo, txtDeShare, txtCopy;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -56,6 +58,9 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
     };
 
 
+    public void setHandler(MainActivity.deSelectedItems handler){
+        this.handler=handler;
+    }
     @Override
     public void setupDialog(Dialog dialog, int style) {
 
@@ -91,23 +96,26 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
                 this.dismiss();
                 Utils.downloadFile(fileNames, selected, getActivity());
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_info: {
                 this.dismiss();
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
                 //Utils.deleteFile(selected, getActivity(), "home");
+                handler.clearAllItems();
                 break;
             }
             case R.id.txt_de_share: {
                 this.dismiss();
                 //Utils.favoriteFile(selected,getActivity());
-
+                handler.clearAllItems();
                 break;
             }
 

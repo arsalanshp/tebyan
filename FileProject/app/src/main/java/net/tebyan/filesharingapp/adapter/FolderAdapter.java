@@ -1,5 +1,6 @@
 package net.tebyan.filesharingapp.adapter;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -15,8 +16,11 @@ import com.koushikdutta.ion.Ion;
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
+import net.tebyan.filesharingapp.fragment.DeleteMenuFragment;
+import net.tebyan.filesharingapp.fragment.FavoriteMenuFragment;
 import net.tebyan.filesharingapp.fragment.HomeFragment;
 import net.tebyan.filesharingapp.fragment.MenuFragment;
+import net.tebyan.filesharingapp.fragment.ShareMenuFragment;
 import net.tebyan.filesharingapp.model.FileData;
 import net.tebyan.filesharingapp.model.GetFileModel_;
 
@@ -219,7 +223,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
                 selectedItems.put(getAdapterPosition(), true);
                 imgTick.setSelected(true);
                 imgTick.setVisibility(View.VISIBLE);
-                handler.showContextMenu(getSelectedItems(), getFileNames(),type);
+                /*handler.showContextMenu(getSelectedItems(), getFileNames(),type);*/
+                showContextMenu(getSelectedItems(), getFileNames(),type);
             } else {
                 if (!data.Data.Files.get(getAdapterPosition()).IsFolder) {
                     if (imgTick != null) {
@@ -280,7 +285,36 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
 
             }*/
         }
+        public void showContextMenu(String fileIds, String fileNames, int type) {
+            Bundle bundle = new Bundle();
+            bundle.putString("index", fileIds);
+            bundle.putString("fileNames", fileNames);
+            if (type == 0) {
+                MenuFragment bottomSheetDialogFragment = new MenuFragment();
+                bottomSheetDialogFragment.setHandler(this);
+                bottomSheetDialogFragment.setArguments(bundle);
+                bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "menuFragment");
+            }
+           if (type == 1) {
+               ShareMenuFragment bottomSheetDialogFragment = new ShareMenuFragment();
+               bottomSheetDialogFragment.setHandler(this);
+                bottomSheetDialogFragment.setArguments(bundle);
+                bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "shareMenuFragment");
+            }
+            if (type == 2) {
+                DeleteMenuFragment bottomSheetDialogFragment = new DeleteMenuFragment();
+                bottomSheetDialogFragment.setHandler(this);
+                bottomSheetDialogFragment.setArguments(bundle);
+                bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "deleteMenuFragment");
+            }
+            if (type == 3) {
+                FavoriteMenuFragment bottomSheetDialogFragment = new FavoriteMenuFragment();
+                bottomSheetDialogFragment.setHandler(this);
+                bottomSheetDialogFragment.setArguments(bundle);
+                bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "FavoriteMenuFragment");
+            }
 
+        }
 
         @Override
         public void clearAllItems() {
@@ -293,6 +327,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
             }
         }
     }
+
+
 
 
     private String getFileNames() {

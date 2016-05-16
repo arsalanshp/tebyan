@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +43,7 @@ import java.util.ArrayList;
 /**
  * Created by v.karimi on 4/24/2016.
  */
-public class HomeFragment extends Fragment implements MainActivity.RefreshDirectory, MenuFragment.ShowMenu {
+public class HomeFragment extends Fragment implements MainActivity.RefreshDirectory{
 
     public View view;
     public ContextMenuRecyclerView rv;
@@ -134,7 +132,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void setNewAdapter(int type) {
         listAdapter=new FolderListAdapter(getActivity(),data,type);
         adapter = new FolderAdapter(getActivity(), data, type);
-        adapter.setHandler(this);
+        /*adapter.setHandler(this);*/
         adapter.setRefreshHandler(this);
         isTablet(activity);
         if (isTablet(activity)) {
@@ -271,7 +269,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 if (changeView) {
                     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
                     listAdapter = new FolderListAdapter(getActivity(), data, type);
-                    listAdapter.setHandler(this);
+                    /*listAdapter.setHandler(this);*/
                     listAdapter.setRefreshHandler(this);
                     rv.setHasFixedSize(true);
                     rv.setAdapter(listAdapter);
@@ -280,14 +278,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     if (isTablet(getActivity())) {
                         rv.setLayoutManager(manager);
                         /*adapter=new FolderAdapter(getActivity(),data,type);*/
-                        adapter.setHandler(this);
+                        /*adapter.setHandler(this);*/
                         adapter.setRefreshHandler(this);
                         adapter.notifyDataSetChanged();
                         rv.setAdapter(adapter);
                         rv.setHasFixedSize(true);
                     } else {
                         rv.setLayoutManager(manager);
-                        adapter.setHandler(this);
+                        /*adapter.setHandler(this);*/
                         adapter.setRefreshHandler(this);
                         rv.setAdapter(adapter);
                         rv.setHasFixedSize(true);
@@ -418,20 +416,27 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                             ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
                             if (result != null) {
                                 pos = addHeaders(result);
-                            /*    if (result.Data != null && result.Error == null && e == null) {
+                             if (result.Data != null && result.Error == null && e == null) {
                                     if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FileID == null) {
                                         Application.CurrentFolder = "";
+                                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
                                         Application.ParrentFolder = null;
                                     }
                                     else {
-                                        if (Application.ParrentFolder == null) {
-                                            Application.CurrentFolder = result.Data.Navigate.get(0).FileID;
+                                        if (result.Data.Navigate.size() == 1) {
+                                            Application.ParrentFolder = result.Data.Navigate.get(0).FileID;
+                                            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                        }if( Application.ParrentFolder == result.Data.Navigate.get(0).FileID && result.Data.Navigate.size()==1){
                                             Application.ParrentFolder="";
+
                                         }
-                                        Application.ParrentFolder = result.Data.Navigate.get(0).FileID;
+                                        if(result.Data.Navigate.size() >1) {
+                                            Application.ParrentFolder = result.Data.Navigate.get(1).FileID;
+                                            Application.CurrentFolder = result.Data.Navigate.get(0).FileID;
+                                            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                        }
                                     }
-                                    // setAdapter(type);
-                                } */
+                                }
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -477,7 +482,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
 
-    @Override
+ /*   @Override
     public void showContextMenu(String fileIds, String fileNames, int type) {
         BottomSheetDialogFragment bottomSheetDialogFragment;
         Bundle bundle = new Bundle();
@@ -504,16 +509,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "FavoriteMenuFragment");
         }
 
-    }
+    }*/
 
     @Override
     public void refreshFile(String currentFolder,String currentFolderName) {
         if (currentFolder.equals("")) {
-            Application.ParrentFolder = null;
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("lld");
-
+            /*Application.ParrentFolder = null;*/
         } else {
-            Application.ParrentFolder = Application.CurrentFolder;
+            /*Application.ParrentFolder = Application.CurrentFolder;*/
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(currentFolderName);
         }
         Application.CurrentFolder = currentFolder;

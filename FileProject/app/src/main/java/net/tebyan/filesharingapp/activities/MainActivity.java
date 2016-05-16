@@ -244,8 +244,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             else {
                 HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
                 if (Application.CurrentFolder != "") {
-                    Application.CurrentFolder=Application.ParrentFolder;
+                    /*Application.CurrentFolder=Application.ParrentFolder;*/
                     homeFragment.getFiles("Title", Application.ParrentFolder);
+
                 } else {
                     super.onBackPressed();
                     finish();

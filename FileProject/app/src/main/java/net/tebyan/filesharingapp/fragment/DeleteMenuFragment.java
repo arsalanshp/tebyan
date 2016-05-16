@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.Utils;
 
 /**
@@ -24,6 +25,7 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
     public String selected;
     private String fileNames;
     String friendIds = "";
+    public MainActivity.deSelectedItems handler;
     public TextView txtRestore, txtDelete, txtMove;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -40,7 +42,9 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
-
+    public void setHandler(MainActivity.deSelectedItems handler){
+        this.handler=handler;
+    }
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
