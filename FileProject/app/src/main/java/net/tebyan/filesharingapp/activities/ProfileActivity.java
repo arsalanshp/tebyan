@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
-                                Toast.makeText(activity, R.string.edited, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ProfileActivity.this, R.string.edited, Toast.LENGTH_SHORT).show();
                                 builder.cancel();
                             }
                         }
@@ -272,7 +272,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
                                              String imageUrl = WebserviceUrl.SiteUrl + accountInfo.Data.AvatarUrl;
                                              Ion.with(profile_pic).transform(new CropCircleTransformation()).load(imageUrl);
                                          } else {
-                                             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+                                             Toast.makeText(ProfileActivity.this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                                          }
                                      }
                                  }
