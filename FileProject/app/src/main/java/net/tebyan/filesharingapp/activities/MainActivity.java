@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (this.uploadFiles != null && !this.uploadFiles.isEmpty()) {
                 this.sizeOfPhotos = this.uploadFiles.size();
                 this.indexInPhotos = this.sizeOfPhotos - 1;
-                uploadPic(this.uploadFiles, this.indexInPhotos, Application.CurrentFolder);
+                uploadPic(this.uploadFiles, this.indexInPhotos);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -566,14 +566,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
-    public void uploadPic(List<PhotoModel> files, int index, final String currentFolder) {
+    public void uploadPic(List<PhotoModel> files, int index) {
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
         /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
         File file = new File(files.get(index).getOriginalPath());
         Ion.with(this)
-                .load(WebserviceUrl.UploadServiceUrl + "?folder=" + currentFolder.trim())
+                .load(WebserviceUrl.UploadServiceUrl + "?folder=" +Application.CurrentFolder)
                 .setHeader("userToken", Application.getToken(this))
                 .setMultipartParameter("name", "test")
                 .setMultipartParameter("filename", file.getName().trim())
@@ -597,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                             if (activity.indexInPhotos > 0) {
                                 activity.indexInPhotos--;
-                                uploadPic(uploadFiles, indexInPhotos, currentFolder);
+                                uploadPic(uploadFiles, indexInPhotos);
                             } else {
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
                             }

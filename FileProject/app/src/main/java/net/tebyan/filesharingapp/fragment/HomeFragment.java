@@ -471,6 +471,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 }
                 data.Data.Files.add(result.Data.Files.get(i));
             }
+            if (listAdapter != null) {
+                listAdapter.data = data;
+            }
             adapter.data = data;
             if(listAdapter!=null){
                 listAdapter.data = data;
@@ -532,6 +535,11 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }
             Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(activity))
+                    .setBodyParameter("folderId", "")
+                    .setBodyParameter("pageIndex", "0")
+                    .setBodyParameter("pageSize", "1000")
+                    .setBodyParameter("order", "DESC")
+                    .setBodyParameter("orderBy", "Createdate")
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
                         @Override

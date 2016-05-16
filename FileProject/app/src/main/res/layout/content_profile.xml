@@ -35,15 +35,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:hint="@string/firstName"
-            android:inputType="text"
-            android:textColor="@color/primary_text" />
+            android:inputType="text" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/firstName"
-            android:textColor="@color/primary_text" />
+            android:text="@string/firstName" />
     </LinearLayout>
 
     <LinearLayout
@@ -57,15 +55,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:hint="@string/lastName"
-            android:textColor="@color/primary_text" />
+            android:hint="@string/lastName" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/lastName"
-            android:textColor="@color/primary_text" />
+            android:text="@string/lastName" />
     </LinearLayout>
 
     <LinearLayout
@@ -79,14 +75,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:hint="@string/username"
-            android:textColor="@color/primary_text" />
+            android:hint="@string/username" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/username"
-            android:textColor="@color/accent" />
+            android:text="@string/username" />
     </LinearLayout>
 </LinearLayout>
