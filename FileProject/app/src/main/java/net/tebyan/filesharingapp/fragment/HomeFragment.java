@@ -400,6 +400,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 }
                 data.Data.Files.add(result.Data.Files.get(i));
             }
+            if (listAdapter != null) {
+                listAdapter.data = data;
+            }
             adapter.data = data;
             adapter.notifyDataSetChanged();
         }
@@ -453,6 +456,11 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
             Ion.with(this).load(WebserviceUrl.GetSharedFilesWithMe)
                     .setHeader("userToken", Application.getToken(activity))
+                    .setBodyParameter("folderId", "")
+                    .setBodyParameter("pageIndex", "0")
+                    .setBodyParameter("pageSize", "1000")
+                    .setBodyParameter("order", "DESC")
+                    .setBodyParameter("orderBy", "Createdate")
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
                         @Override
