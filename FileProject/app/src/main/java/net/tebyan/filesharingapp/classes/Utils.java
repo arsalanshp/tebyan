@@ -130,7 +130,7 @@ public class Utils {
     public static void downloadFile(final String filename, String fileId, final Activity activity) {
         final String[] filenames = filename.split(",");
         final String[] fileIds = fileId.split(",");
-        for(int i=0;i<fileIds.length;i++) {
+        for (int i = 0; i < fileIds.length; i++) {
             Uri downloadUri = Uri.parse(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileIds[i]);
             DownloadManager.Request request = new DownloadManager.Request(downloadUri);
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/TebyanFiles/", filenames[i]);
@@ -179,7 +179,7 @@ public class Utils {
         final String filename = filename1.split(",")[0];
         final String fileId = fileId1.split(",")[0];
         final File folder = new File(Environment.getExternalStorageDirectory() + "/TebyanFiles/");
-        if (!folder.isDirectory())
+        if (!folder.exists())
             folder.mkdir();
         final ProgressDialog mProgressDialog;
         mProgressDialog = new ProgressDialog(activity);
@@ -204,35 +204,37 @@ public class Utils {
                         if (e == null) {
                             Toast.makeText(activity, "فایل با موفقیت دانلود شد", Toast.LENGTH_SHORT).show();
                             mProgressDialog.cancel();
-                            shareFileToNetwork(folder + "/" + filename, activity);
+                            shareFileToNetwork(file, activity);
                         } else
                             Toast.makeText(activity, "اشکال در عملیات اشتراک", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private static void shareFileToNetwork(String path, Activity activity) {
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, "");
-        final Uri fileUri;
-        fileUri = Uri.parse(path);
-        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-        intent.setType("*/*");
-        activity.startActivity(intent);
+    private static void shareFileToNetwork(File file, Activity activity) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(file));
+        shareIntent.setType("*/*");
+        activity.startActivity(Intent.createChooser(shareIntent, activity.getResources().getText(R.string.share_file)));
     }
 
     public static void openFile(File file, Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri data = Uri.fromFile(file);
+        intent.setDataAndType(data, getMimeType(file));
+        activity.startActivity(intent);
+    }
+
+    private static String getMimeType(File file) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(file.getName());
         String type = map.getMimeTypeFromExtension(ext);
         if (type == null)
             type = "*/*";
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri data = Uri.fromFile(file);
-        intent.setDataAndType(data, type);
-        activity.startActivity(intent);
+        return type;
     }
+
 
     public static void rename_File(String fileID1, String newName, final FragmentActivity activity) {
         if (Utils.isOnline(activity)) {
@@ -440,6 +442,7 @@ public class Utils {
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
+
     public static void unStar(String fileID1, final FragmentActivity activity) {
         if (Utils.isOnline(activity)) {
             String fileID = fileID1.substring(0, fileID1.length() - 1);
@@ -477,6 +480,7 @@ public class Utils {
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
+
     public static void addFriend(final Context context) {
         if (Utils.isOnline(context)) {
             JsonArray jsonArray = new JsonArray();
