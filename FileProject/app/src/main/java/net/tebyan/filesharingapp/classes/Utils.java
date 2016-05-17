@@ -214,7 +214,7 @@ public class Utils {
     private static void shareFileToNetwork(File file, Activity activity) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(file));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         shareIntent.setType("*/*");
         activity.startActivity(Intent.createChooser(shareIntent, activity.getResources().getText(R.string.share_file)));
     }
@@ -255,6 +255,28 @@ public class Utils {
                     });
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+    public static void shareLink(String fileSelected,Activity activity){
+
+        StringBuilder url = new StringBuilder();
+        String selectedArray[]=fileSelected.split(",");
+        if(selectedArray.length>1){
+            for(int i=0;i<selectedArray.length;i++){
+                url.append(activity.getString(R.string.link));
+                url.append("\n");
+                url.append(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload +selectedArray[i]);
+                url.append("\n");
+            }
+        }else{
+            url.append(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload +selectedArray[0]);
+        }
+
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_SUBJECT, "آدرس دانلود");
+        i.putExtra(Intent.EXTRA_TEXT, url.toString());
+         activity.startActivity(Intent.createChooser(i, "Share URL"));
+
     }
 
     public static void onNewFolder(String name, final FragmentActivity activity) {

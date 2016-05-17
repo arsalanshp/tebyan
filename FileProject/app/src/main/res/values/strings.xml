@@ -129,4 +129,5 @@
     <string name="info_error">برای مشاهده ی اطلاعات تنها یک فایل را انتخاب نمایید</string>
     <string name="no_friend_error">هیچ موردی در لیست مخاطبین شما وجود ندارد</string>
     <string name="home">خانه</string>
+    <string name="link">لینک دانلود</string>
 </resources>

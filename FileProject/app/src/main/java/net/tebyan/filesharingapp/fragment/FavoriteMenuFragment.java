@@ -27,6 +27,7 @@ import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.activities.MainActivity;
 import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
+import net.tebyan.filesharingapp.classes.NewItemFragment;
 import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FriendData;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 /**
  * Created by v.karimi on 5/1/2016.
  */
-public class FavoriteMenuFragment extends BottomSheetDialogFragment implements View.OnClickListener {
+public class FavoriteMenuFragment extends BottomSheetDialogFragment implements View.OnClickListener,NewItemFragment.OnNewFolderListener{
     public String selected;
     private String fileNames;
     public MainActivity.deSelectedItems handler;
@@ -65,6 +66,11 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
         this.handler=handler;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity=activity;
+    }
     @Override
     public void setupDialog(Dialog dialog, int style) {
 
@@ -134,6 +140,17 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
                 handler.clearAllItems();
                 break;
             }
+            case R.id.txt_info:{
+                this.dismiss();
+                String selectArray[]=selected.split(",");
+                if(selectArray.length>1){
+                    Toast.makeText(activity,getString(R.string.info_error),Toast.LENGTH_LONG).show();
+                }else {
+                    NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(),this, 2, activity, selected, "");
+                }
+                handler.clearAllItems();
+                break;
+            }
             case R.id.txt_add_people:{
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
@@ -151,6 +168,11 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
 
     private void renameFile() {
         NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 1, activity);
+    }
+
+    @Override
+    public void onNewFolder(String name) {
+
     }
 
 
@@ -190,11 +212,7 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity=activity;
-    }
+
 
     public void showContactsToShare(final ArrayList<FriendData> friends) {
         CharSequence[] name = new CharSequence[friends.size()];
