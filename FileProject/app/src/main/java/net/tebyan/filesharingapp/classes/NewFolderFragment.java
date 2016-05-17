@@ -26,7 +26,7 @@ public class NewFolderFragment extends NewItemFragment {
 
     private static final String TAG = "new_folder_fragment";
 
-    public static void showDialog(final FragmentManager fm, final OnNewFolderListener listener, int type, Activity activity, String currentFileID,String text) {
+    public static void showDialog(final FragmentManager fm, final OnNewFolderListener listener, int type,Activity activity, String currentFileID,String text) {
         NewItemFragment d = new NewFolderFragment();
         d.setListener(listener, type, activity, currentFileID,text);
         d.show(fm, TAG);

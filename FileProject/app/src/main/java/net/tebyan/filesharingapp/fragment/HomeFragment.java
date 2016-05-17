@@ -517,9 +517,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     @Override
     public void refreshFile(String currentFolder,String currentFolderName) {
         if (currentFolder.equals("")) {
-            /*Application.ParrentFolder = null;*/
+            Application.ParrentFolder = null;
         } else {
-            /*Application.ParrentFolder = Application.CurrentFolder;*/
+            Application.ParrentFolder = Application.CurrentFolder;
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(currentFolderName);
         }
         Application.CurrentFolder = currentFolder;

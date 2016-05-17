@@ -3,13 +3,13 @@ package net.tebyan.filesharingapp.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -138,17 +138,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }
             case R.id.txt_download: {
                 this.dismiss();
-                Utils.downloadFile(fileNames, selected, getActivity());
+                Utils.downloadFile(fileNames, selected, activity);
                 break;
             }
             case R.id.txt_share_link: {
                 this.dismiss();
-                String url= WebserviceUrl.DownloadFile + Application.getToken(getActivity()) + WebserviceUrl.FileIdDownload +selected.substring(0,selected.length()-1);
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT, "آدرس دانلود");
-                i.putExtra(Intent.EXTRA_TEXT, url);
-                startActivity(Intent.createChooser(i, "Share URL"));
+                Utils.shareLink(selected,activity);
                 handler.clearAllItems();
                 break;
             }
@@ -173,7 +168,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }
             case R.id.txt_send_file:{
                 this.dismiss();
-                Utils.shareFile(fileNames, selected, getActivity());
+                Utils.shareFile(fileNames, selected, activity);
                 handler.clearAllItems();
                 break;
             }
@@ -182,9 +177,9 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             this.dismiss();
             String selectArray[]=selected.split(",");
             if(selectArray.length>1){
-                Toast.makeText(getActivity(),getString(R.string.info_error),Toast.LENGTH_LONG).show();
+                Toast.makeText(activity,getString(R.string.info_error),Toast.LENGTH_LONG).show();
             }else {
-                NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
+                NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(), this, 2, activity, selected, "");
             }
             handler.clearAllItems();
                 break;
@@ -201,25 +196,25 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 String arrZip[]=fileNames.split(",");
                 if(extension.trim().equals("zip,")) {
                     if(arrZip.length>1){
-                        Utils.zipFile(selected.substring(0, selected.length() - 1), getActivity(), "home");
+                        Utils.zipFile(selected.substring(0, selected.length() - 1),(FragmentActivity) activity, "home");
                     }else {
-                        Utils.unZipFile(selected.substring(0, selected.length() - 1), getActivity(), "home");
+                        Utils.unZipFile(selected.substring(0, selected.length() - 1), (FragmentActivity)activity, "home");
                     }
                 }else{
-                    Utils.zipFile(selected.substring(0,selected.length()-1), getActivity(),"home");
+                    Utils.zipFile(selected.substring(0,selected.length()-1), (FragmentActivity)activity,"home");
                 }
                 handler.clearAllItems();
                 break;
             }
             case R.id.txt_remove: {
                 this.dismiss();
-                Utils.deleteFile(selected, getActivity(), "home");
+                Utils.deleteFile(selected, (FragmentActivity)activity, "home");
                 handler.clearAllItems();
                 break;
             }
             case R.id.txt_favorite: {
                 this.dismiss();
-            Utils.favoriteFile(selected,getActivity());
+            Utils.favoriteFile(selected,(FragmentActivity) activity);
                 handler.clearAllItems();
                 break;
             }
@@ -229,7 +224,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
     private void renameFile() {
 
-        NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(),this, 1, getActivity(), selected,"");
+        NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(),this, 1, activity, selected,"");
     }
 
     @Override
@@ -255,12 +250,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
         return super.onCreateView(inflater, container, savedInstanceState);
     }
     public void getFriendsForShareFile(String fileIdClicked) {
-        if (Utils.isOnline(getActivity())) {
+        if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
-            Ion.with(getActivity())
+            Ion.with(activity)
                     .load(WebserviceUrl.GetFriendsForShareFile + fileIdClicked)
                     .setTimeout(100000000)
-                    .setHeader("userToken", Application.getToken(getActivity()))
+                    .setHeader("userToken", Application.getToken(activity))
                     .as(GetFriendsModel.class)
                     .setCallback(new FutureCallback<GetFriendsModel>() {
                         @Override
@@ -268,7 +263,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (e == null) {
                                 if (result.Data.size() == 0) {
-                                     Toast.makeText(getActivity(),getString(R.string.no_friend_error),Toast.LENGTH_LONG).show();
+                                     Toast.makeText(activity,getString(R.string.no_friend_error),Toast.LENGTH_LONG).show();
                                 } else {
                                     showContactsToShare(result.Data);
                                 }
@@ -276,7 +271,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                         }
                     });
         } else
-            Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
     public void showContactsToShare(final ArrayList<FriendData> friends) {
@@ -308,12 +303,12 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
         user.show();
     }
     public void shareWith(String canEdit, String ps, String fileID, String friendIds) {
-        if (Utils.isOnline(getActivity())) {
+        if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
-            Ion.with(getActivity())
+            Ion.with(activity)
                     .load(WebserviceUrl.FullShareFile)
                     .setTimeout(1000000000)
-                    .setHeader("userToken", Application.getToken(getActivity()))
+                    .setHeader("userToken", Application.getToken(activity))
                     .setBodyParameter("canEdit", canEdit)
                     .setBodyParameter("ps",ps)
                     .setBodyParameter("friendIds",friendIds)
@@ -325,11 +320,11 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                         public void onCompleted(Exception e, JsonObject result) {
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (e == null && result.get("Error").toString().equals("null")) {
-                                Toast.makeText(getActivity(), result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, result.get("Data").getAsJsonObject().get("Message").toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         } else
-            Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 }
