@@ -70,7 +70,7 @@ public class NotificationTickService extends IntentService {
                 .setCallback(new FutureCallback<Events>() {
                     @Override
                     public void onCompleted(Exception e, Events events) {
-                        if (events!=null&&events.Data != null && events.Error == null && e == null) {
+                        if (events != null && events.Data != null && events.Error == null && e == null) {
                             Boolean applicationIsRunningOnNetworkActivity = false;
                             /*if (Application.currentActivity != null) {
                                 applicationIsRunningOnNetworkActivity = MainActivity.class
@@ -83,14 +83,14 @@ public class NotificationTickService extends IntentService {
                             } else {
                                 if (Integer.parseInt(events.Data.ShareMe) > 0) {
 
-                                  Intent notificationIntent = new Intent(
+                                    Intent notificationIntent = new Intent(
                                             getApplicationContext(), MainActivity.class);
                                     notificationIntent.putExtra("FileID", "");
                                     notificationIntent.putExtra("deletedFiles", false);
                                     notificationIntent.putExtra("sharedWithMe", true);
                                     notificationIntent
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                                     PendingIntent intent = PendingIntent.getActivity(
                                             getApplicationContext(), 0, notificationIntent, 0);
@@ -135,21 +135,83 @@ public class NotificationTickService extends IntentService {
                                     mNotifyMgr.notify(mNotificationId, notification);
 
                                     stopSelf();
+                                    Ion.with(context)
+                                            .load(WebserviceUrl.RepositoryServiceUrl + "SetNoteShareReaded")
+                                            .setHeader("userToken", Application.getToken(context))
+                                            .setHeader("checkToken", "true")
+                                            .asString()
+                                            .setCallback(new FutureCallback<String>() {
+                                                @Override
+                                                public void onCompleted(Exception e, String result) {
+                                                }
+                                            });
+                                }
+                                if (Integer.parseInt(events.Data.NewFriendJoinedCount) > 0) {
+
+                                    Intent notificationIntent = new Intent(
+                                            getApplicationContext(), MainActivity.class);
+                                    notificationIntent.putExtra("FileID", "");
+                                    notificationIntent.putExtra("deletedFiles", false);
+                                    notificationIntent.putExtra("sharedWithMe", true);
+                                    notificationIntent
+                                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                    PendingIntent intent = PendingIntent.getActivity(
+                                            getApplicationContext(), 0, notificationIntent, 0);
+                                    String text = getResources()
+                                            .getString(R.string.app_name);
+
+                                    Uri alarmSound = RingtoneManager
+                                            .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+                                    final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                                            getApplicationContext())
+                                            .setSmallIcon(R.mipmap.ic_launcher)
+                                            .setNumber(Integer.parseInt(events.Data.ShareMe))
+                                            .setContentTitle(text)
+                                            .setContentIntent(intent)
+                                            .setContentText(events.Data.ShareMe + getString(R.string.shared))
+                                            .setSound(alarmSound);
+
+                                    if (events.ThumbUrl != null) {
+                                        if (events.ThumbUrl != null) {
+                                            Ion.with(getApplicationContext()).load(events.ThumbUrl).asBitmap().setCallback(new FutureCallback<Bitmap>() {
+                                                @Override
+                                                public void onCompleted(Exception e, Bitmap bitmap) {
+                                                    Drawable thumb = new BitmapDrawable(bitmap);
+                                                    mBuilder.setLargeIcon(bitmap);
+                                                }
+                                            });
+                                        }
+
+                                    }
+
+                                    int mNotificationId = 77;
+                                    // Gets an instance of the NotificationManager
+                                    // service
+                                    NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                    // Builds the notification and issues it.
+
+                                    Notification notification = mBuilder.build();
+
+                                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                                    mNotifyMgr.notify(mNotificationId, notification);
+
+                                    stopSelf();
+                                    Ion.with(context)
+                                            .load(WebserviceUrl.RepositoryServiceUrl + "SetNoteShareReaded")
+                                            .setHeader("userToken", Application.getToken(context))
+                                            .setHeader("checkToken", "true")
+                                            .asString()
+                                            .setCallback(new FutureCallback<String>() {
+                                                @Override
+                                                public void onCompleted(Exception e, String result) {
+                                                }
+                                            });
                                 }
                             }
-                            Ion.with(context)
-                                    .load(WebserviceUrl.RepositoryServiceUrl + "SetNoteShareReaded")
-                                    .setHeader("userToken", Application.getToken(context))
-                                    .setHeader("checkToken", "true")
-                                    .asString()
-                                    .setCallback(new FutureCallback<String>() {
-                                        @Override
-                                        public void onCompleted(Exception e, String result) {
-                                            /*Log.i("dfgfg",result);
-                                            Log.i("dfgfg",e+"");*/
-
-                                        }
-                                    });
                         } else {
                             if (events != null) {
                                 //Log.e("error", e.getMessage());
