@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager;
 public class Application extends android.app.Application {
     public static String CurrentFolder;
     public static String ParrentFolder;
+    public static String UploadFolder;
     public static String fileIdClicked = "";
     public static boolean fileCopied = false;
     public static boolean fileMoved = false;
