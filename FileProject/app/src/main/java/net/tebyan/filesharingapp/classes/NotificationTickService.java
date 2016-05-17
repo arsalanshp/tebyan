@@ -85,9 +85,7 @@ public class NotificationTickService extends IntentService {
 
                                     Intent notificationIntent = new Intent(
                                             getApplicationContext(), MainActivity.class);
-                                    notificationIntent.putExtra("FileID", "");
-                                    notificationIntent.putExtra("deletedFiles", false);
-                                    notificationIntent.putExtra("sharedWithMe", true);
+                                    notificationIntent.putExtra("type", 1);
                                     notificationIntent
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                                                     | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -150,9 +148,6 @@ public class NotificationTickService extends IntentService {
 
                                     Intent notificationIntent = new Intent(
                                             getApplicationContext(), MainActivity.class);
-                                    notificationIntent.putExtra("FileID", "");
-                                    notificationIntent.putExtra("deletedFiles", false);
-                                    notificationIntent.putExtra("sharedWithMe", true);
                                     notificationIntent
                                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                                                     | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -168,10 +163,10 @@ public class NotificationTickService extends IntentService {
                                     final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                                             getApplicationContext())
                                             .setSmallIcon(R.mipmap.ic_launcher)
-                                            .setNumber(Integer.parseInt(events.Data.ShareMe))
+                                            .setNumber(Integer.parseInt(events.Data.NewFriendJoinedCount))
                                             .setContentTitle(text)
                                             .setContentIntent(intent)
-                                            .setContentText(events.Data.ShareMe + getString(R.string.shared))
+                                            .setContentText(events.Data.NewFriendJoinedCount + getString(R.string.new_friend))
                                             .setSound(alarmSound);
 
                                     if (events.ThumbUrl != null) {
