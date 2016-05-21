@@ -34,7 +34,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
     public GetFileModel_ data;
     FragmentActivity activity;
     ArrayList<FileData> fileSelected;
-    MenuFragment.ShowMenu handler;
+    MainActivity.ShowContextMenu handler;
     public int type;
     MainActivity.RefreshDirectory refreshHandler;
     public SparseBooleanArray selectedItems;
@@ -48,7 +48,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
         this.type=type;
     }
 
-    public void setHandler(MenuFragment.ShowMenu handler) {
+    public void setHandler(MainActivity.ShowContextMenu  handler) {
         this.handler = handler;
     }
 
@@ -318,6 +318,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
             for (int i = 0; i < data.Data.Files.size(); i++) {
                 if (imgTick != null) {
                     imgTick.setSelected(false);
+                    notifyDataSetChanged();
                     /*imgTick.setVisibility(View.GONE);*/
                 }
             }

@@ -10,6 +10,9 @@ import java.io.Serializable;
 
 
 public class PhotoModel implements Serializable {
+	public void setIsChecked(boolean isChecked) {
+		this.isChecked = isChecked;
+	}
 
 	private static final long serialVersionUID = 1L;
 

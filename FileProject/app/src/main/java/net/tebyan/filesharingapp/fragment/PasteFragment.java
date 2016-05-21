@@ -107,10 +107,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (result != null) {
                                 if (result.Data != null && result.Error == null && e == null) {
-                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                        Application.ParrentFolder = "";
-                                    else
-                                        Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+
                                     int headerPos = 0;
                                     Boolean isHeader = true;
                                     final GetFileModel_ data = new GetFileModel_();

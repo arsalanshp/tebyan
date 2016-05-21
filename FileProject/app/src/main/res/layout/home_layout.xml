@@ -17,12 +17,26 @@
        />
 
 
-    <ProgressBar
+   <!-- <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:translationZ="3dp"
-        android:visibility="gone" />
-
+        android:visibility="visible" />-->
+<android.support.v7.widget.CardView
+    android:layout_width="300dp"
+    android:layout_height="50dp"
+    android:visibility="gone"
+    android:layout_marginBottom="10dp"
+    android:id="@+id/linear_bar_menu"
+    card_view:cardBackgroundColor="@android:color/white"
+    android:layout_centerInParent="true"
+    android:layout_alignParentBottom="true">
+    <include
+        layout="@layout/bottom_bar"
+        android:layout_margin="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</android.support.v7.widget.CardView>
 </RelativeLayout>

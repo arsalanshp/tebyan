@@ -19,8 +19,8 @@ public class WebserviceUrl {
     public static String GetAccountInfo = AccountServiceUrl + "GetAccountInfo";
     public static String NewFolderRequest = RepositoryServiceUrl + "NewFolder?name=";
     public static String GetFiles = RepositoryServiceUrl + "GetFiles?mode=Drive&folder=";
-    public static String GetDeletedFiles = RepositoryServiceUrl + "GetFiles?mode=Trash&folderId=";
-    public static String GetSharedFilesWithMe = RepositoryServiceUrl + "GetFiles?mode=ShareMe";
+    public static String GetDeletedFiles = RepositoryServiceUrl + "GetFiles?mode=Trash&folder=";
+    public static String GetSharedFilesWithMe = RepositoryServiceUrl + "GetFiles?mode=ShareMe&folder=";
     public static String GetStaredFiles = RepositoryServiceUrl + "GetFiles?mode=Stars&folder=";
     public static String staredFiles = RepositoryServiceUrl + "Star";
     public static String DeleteFile = RepositoryServiceUrl + "Trash";

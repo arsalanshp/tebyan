@@ -1,11 +1,7 @@
 package net.tebyan.filesharingapp.fragment;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -13,39 +9,28 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 import com.nononsenseapps.filepicker.AbstractFilePickerActivity;
 import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.photoselector.model.PhotoModel;
-import com.photoselector.ui.PhotoSelectorActivity;
 
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.activities.MainActivity;
-import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
-import net.tebyan.filesharingapp.classes.WebserviceUrl;
-import net.tebyan.filesharingapp.model.FileUploadInput;
-import net.tebyan.filesharingapp.model.FileUploadResultModel;
-import net.tebyan.filesharingapp.model.MainModel;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by v.karimi on 5/4/2016.
  */
 public class UploadSheetFragment extends BottomSheetDialogFragment implements View.OnClickListener {
     public String selected;
-    public ImageView imgUpload, imgUploadPic, imgFolder;
+    private String fileNames;
+    public ImageView imgUpload, imgUploadPic, imgFolder, imgTakePhoto;
     public int SELECT_IMAGE_CODE = 1;
     public int SELECT_FILE_CODE = 3;
 
@@ -76,6 +61,8 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
         imgUploadPic.setOnClickListener(this);
         imgFolder = (ImageView) contentView.findViewById(R.id.img_new_folder);
         imgFolder.setOnClickListener(this);
+        imgTakePhoto = (ImageView) contentView.findViewById(R.id.img_take_photo);
+        imgTakePhoto.setOnClickListener(this);
         imgUpload = (ImageView) contentView.findViewById(R.id.img_upload_file);
         imgUpload.setOnClickListener(this);
         dialog.setContentView(contentView);
@@ -96,10 +83,11 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 break;
             }
             case R.id.img_upload_pic: {
-                ((MainActivity)getActivity()).startPhotoSelector();
+                ((MainActivity) getActivity()).startPhotoSelector();
                 dismiss();
                 break;
             }
+
             case R.id.img_upload_file: {
                 Intent i = new Intent(getActivity(), FilePickerActivity.class);
                 AbstractFilePickerActivity.isClip = false;
@@ -113,9 +101,35 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 dismiss();
                 break;
             }
+            case R.id.img_take_photo: {
+                openCameraFragment();
+                break;
+            }
 
 
         }
     }
 
-}
+    private void openCameraFragment() {
+        Fragment fragment = new CameraFragment();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment, "camera");
+        fragmentTransaction.addToBackStack("camera");
+        fragmentTransaction.commit();
+    }
+
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return super.onCreateDialog(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+    }
+
+

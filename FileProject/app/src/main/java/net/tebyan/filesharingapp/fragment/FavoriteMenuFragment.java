@@ -114,13 +114,12 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
             case R.id.txt_un_star: {
                 this.dismiss();
              Utils.unStar(selected, (FragmentActivity) activity);
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
                 this.dismiss();
                 Utils.downloadFile(fileNames, selected.substring(0, selected.length() - 1), activity);
-                handler.clearAllItems();
+
                 break;
             }
             case R.id.txt_share_link: {
@@ -131,13 +130,12 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
                 i.putExtra(Intent.EXTRA_SUBJECT, "آدرس دانلود");
                 i.putExtra(Intent.EXTRA_TEXT, url);
                 startActivity(Intent.createChooser(i, "Share URL"));
-                handler.clearAllItems();
+
                 break;
             }
             case R.id.txt_send_file:{
                 this.dismiss();
                 Utils.shareFile(fileNames, selected, activity);
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_info:{
@@ -148,19 +146,16 @@ public class FavoriteMenuFragment extends BottomSheetDialogFragment implements V
                 }else {
                     NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(),this, 2, activity, selected, "");
                 }
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_add_people:{
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_remove: {
                 this.dismiss();
                 Utils.deleteFile(selected,(FragmentActivity)activity, "favorite");
-                handler.clearAllItems();
                 break;
             }
         }

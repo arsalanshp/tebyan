@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:weightSum="2.5"
+    android:background="#FFFFFF"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:textColor="#000000"
+        android:text="25مورد"
+        android:layout_gravity="center|right"
+        android:textSize="18dp"
+        android:id="@+id/txt_count"/>
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:layout_gravity="right|center"
+        android:src="@drawable/ic_more_vert_black_24dp"
+        android:id="@+id/img_more_menu" />
+<!--    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:src="@android:drawable/stat_sys_download"
+        android:id="@+id/img_download_menu" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_dialog_info"
+        android:id="@+id/img_info_menu" />-->
+
+</LinearLayout>

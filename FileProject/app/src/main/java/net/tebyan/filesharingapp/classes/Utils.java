@@ -314,7 +314,7 @@ public class Utils {
             JsonObject json = new JsonObject();
             json.addProperty("fileId", fileID);
             Ion.with(activity)
-                    .load(WebserviceUrl.Delete)
+                    .load(WebserviceUrl.DeleteFile)
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(activity))
                     .setJsonObjectBody(json)

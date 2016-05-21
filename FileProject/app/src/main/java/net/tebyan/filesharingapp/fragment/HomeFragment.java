@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -19,7 +22,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -43,7 +48,7 @@ import java.util.ArrayList;
 /**
  * Created by v.karimi on 4/24/2016.
  */
-public class HomeFragment extends Fragment implements MainActivity.RefreshDirectory{
+public class HomeFragment extends Fragment implements MainActivity.RefreshDirectory,MainActivity.ShowBarMenu,View.OnClickListener,MainActivity.ShowContextMenu{
 
     public View view;
     public ContextMenuRecyclerView rv;
@@ -51,7 +56,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public FolderListAdapter listAdapter;
     public GetFileModel_ data;
     public String token;
+    public TextView txtCount;
     public Activity activity;
+    public CardView linearBarMenu;
     public String title;
     public GridLayoutManager manager;
     //public String currentFolder;
@@ -61,6 +68,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public static boolean checkState = true;
     //public String parentFolder;
     public static Boolean changeView = false;
+    public ImageView imgMore;
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
     private ArrayList<FileData> fileDatas;
@@ -73,8 +81,10 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         view = inflater.inflate(R.layout.home_layout, container, false);
         activity = getActivity();
         initUI();
-        initData();
+        /*initData();*/
         token = Application.getToken(getActivity());
+        adapter.notifyDataSetChanged();
+        rv.setAdapter(adapter);
         return view;
     }
 
@@ -91,18 +101,24 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        initData();
         changeView = false;
     }
 
     public void initUI() {
         rv = (ContextMenuRecyclerView) view.findViewById(R.id.rv);
+        linearBarMenu= (CardView) view.findViewById(R.id.linear_bar_menu);
+        txtCount= (TextView) view.findViewById(R.id.txt_count);
+        imgMore= (ImageView) view.findViewById(R.id.img_more_menu);
+        imgMore.setOnClickListener(this);
+        setNewAdapter(type);
 
     }
 
     public void initData() {
         data = new GetFileModel_();
         type = getArguments().getInt("type");
-        setNewAdapter(type);
+
         switch (type) {
             case 0: {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
@@ -126,13 +142,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }
 
         }
-        adapter.notifyDataSetChanged();
+
     }
 
     public void setNewAdapter(int type) {
         listAdapter=new FolderListAdapter(getActivity(),data,type);
         adapter = new FolderAdapter(getActivity(), data, type);
-        /*adapter.setHandler(this);*/
+        adapter.setBarHandler(this);
+        adapter.setHandler(this);
         adapter.setRefreshHandler(this);
         isTablet(activity);
         if (isTablet(activity)) {
@@ -398,7 +415,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
     public void getFiles(String sortBy, String currentFolder) {
-        if (Utils.isOnline(activity)) {
+        if (Utils.isOnline((MainActivity)getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
 
             String url = WebserviceUrl.GetFiles + currentFolder;
@@ -485,7 +502,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     }
 
 
- /*   @Override
+  @Override
     public void showContextMenu(String fileIds, String fileNames, int type) {
         BottomSheetDialogFragment bottomSheetDialogFragment;
         Bundle bundle = new Bundle();
@@ -495,24 +512,28 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             bottomSheetDialogFragment = new MenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "menuFragment");
+            deSelectHandler.clearAllItems();
         }
         if (type == 1) {
             bottomSheetDialogFragment = new ShareMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "shareMenuFragment");
+            deSelectHandler.clearAllItems();
         }
         if (type == 2) {
             bottomSheetDialogFragment = new DeleteMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "deleteMenuFragment");
+            deSelectHandler.clearAllItems();
         }
         if (type == 3) {
             bottomSheetDialogFragment = new FavoriteMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "FavoriteMenuFragment");
+            deSelectHandler.clearAllItems();
         }
 
-    }*/
+    }
 
     @Override
     public void refreshFile(String currentFolder,String currentFolderName) {
@@ -524,6 +545,9 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         }
         Application.CurrentFolder = currentFolder;
         getFiles("Title", currentFolder);
+        if(linearBarMenu.getVisibility()==View.VISIBLE) {
+            linearBarMenu.setVisibility(View.GONE);
+        }
     }
 
     public void getSharedWithMe(String sortBy) {
@@ -531,15 +555,15 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
             String url = WebserviceUrl.GetSharedFilesWithMe+Application.CurrentFolder;
             if (sortBy != null && !sortBy.isEmpty()) {
-                url += "&orderBy=" + sortBy + "&sortOrder=ASC";
+                url += "&orderBy=" + sortBy + "&order=ASC";
             }
-            Ion.with(this).load(url)
+            Ion.with(this).load("GET",url)
                     .setHeader("userToken", Application.getToken(activity))
-                    .setBodyParameter("folderId", "")
+                    /*.setBodyParameter("folderId", "")
                     .setBodyParameter("pageIndex", "0")
-                    .setBodyParameter("pageSize", "1000")
+                    .setBodyParameter("pageSize", "10")
                     .setBodyParameter("order", "DESC")
-                    .setBodyParameter("orderBy", "Createdate")
+                    .setBodyParameter("orderBy", "Createdate")*/
                     .as(GetFileModel_.class)
                     .setCallback(new FutureCallback<GetFileModel_>() {
                         @Override
@@ -564,7 +588,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
             String url = WebserviceUrl.GetDeletedFiles+Application.CurrentFolder;
             if (sortBy != null && !sortBy.isEmpty()) {
-                url += "&orderBy=" + sortBy + "&sortOrder=ASC";
+                url += "&orderBy=" + sortBy + "&order=ASC";
             }
             Ion.with(this).load(url)
                     .setHeader("userToken", Application.getToken(getActivity()))
@@ -652,6 +676,31 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }
         } else {
             Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void initBarMenu() {
+        if(adapter.getSelectedSize()>1) {
+            linearBarMenu.setVisibility(View.VISIBLE);
+            txtCount.setText(adapter.selectedItems.size()+" "+getString(R.string.item_selected));
+        }else{
+            /*txtCount.setText(adapter.selectedItems.size()+" "+getString(R.string.item_selected));*/
+            linearBarMenu.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        String selectedFileId=adapter.getSelectedItems();
+        String selectedFileName=adapter.getFileNames();
+        switch (view.getId()){
+            case R.id.img_more_menu:{
+            showContextMenu(selectedFileId, selectedFileName,type);
+                linearBarMenu.setVisibility(View.GONE);
+                break;
+            }
+
         }
     }
 

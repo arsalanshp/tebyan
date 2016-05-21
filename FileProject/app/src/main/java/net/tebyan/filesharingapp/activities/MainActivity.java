@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView phone_menu;
     ImageView profile_menu_pic;
     FloatingActionButton fab;
+    FABProgressCircle fabProgress;
     Button notifCount;
     private static int SELECT_IMAGE_CODE = 1;
     private int SELECT_FILM_CODE = 3;
@@ -180,21 +182,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setNotifCount(0);
         Utils.reloadMainActivity(Application.CurrentFolder, activity, false, true);
     }
-
-    /*public void setAdapter() {
-        isTablet(getApplicationContext());
-        adapter = new FolderAdapter(activity, *//*folderList,*//* data,false);
-        if (isTablet(this)) {
-            rv.setHasFixedSize(true);
-            rv.setLayoutManager(new GridLayoutManager(this, 3));
-        } else {
-            rv.setHasFixedSize(true);
-            rv.setLayoutManager(new GridLayoutManager(this, 2));
-        }
-        registerForContextMenu(rv);
-        rv.setAdapter(adapter);
-    }*/
-
     public void setDrawer() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -317,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         relFrgTab = (RelativeLayout) findViewById(R.id.relFrgTab);
         rv = (ContextMenuRecyclerView) findViewById(R.id.rv);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fabProgress= (FABProgressCircle) findViewById(R.id.fabProgress);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     }
 
@@ -563,6 +551,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
         /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
         File file = new File(files.get(index).getOriginalPath());
+        fabProgress.show();
+        Application.UploadFolder=Application.CurrentFolder;
         Ion.with(this)
                 .load(WebserviceUrl.UploadServiceUrl + "?folder=" +Application.CurrentFolder)
                 .setHeader("userToken", Application.getToken(this))
@@ -573,6 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setCallback(new FutureCallback<FileUploadResultModel>() {
                     @Override
                     public void onCompleted(Exception e, FileUploadResultModel result) {
+
                         if (result != null) {
                             if (result.Error == null) {
                                 if (result.Data != null && !result.Data.FileID.equals(""))
@@ -590,7 +581,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 activity.indexInPhotos--;
                                 uploadPic(uploadFiles, indexInPhotos);
                             } else {
+                                fabProgress.hide();
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
+                                if(Application.CurrentFolder.equals(Application.UploadFolder)){
+                                    HomeFragment fragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
+                                    fragment.getFiles("Title",Application.UploadFolder);
+                                }
                             }
                         }
                     }
@@ -905,5 +901,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface deSelectedItems {
         void clearAllItems();
+    }
+    public interface ShowBarMenu {
+        void initBarMenu();
+    }
+    public interface ShowContextMenu {
+        void showContextMenu(String fileIds, String fileNames, int type);
     }
 }

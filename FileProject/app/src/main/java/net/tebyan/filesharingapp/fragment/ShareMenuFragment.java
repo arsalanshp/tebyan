@@ -96,26 +96,22 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
                 this.dismiss();
                 Utils.downloadFile(fileNames, selected, getActivity());
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_info: {
                 this.dismiss();
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
                 //Utils.deleteFile(selected, getActivity(), "home");
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_de_share: {
                 this.dismiss();
                 //Utils.favoriteFile(selected,getActivity());
-                handler.clearAllItems();
                 break;
             }
 

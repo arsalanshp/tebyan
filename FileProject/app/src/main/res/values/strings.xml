@@ -130,4 +130,6 @@
     <string name="no_friend_error">هیچ موردی در لیست مخاطبین شما وجود ندارد</string>
     <string name="home">خانه</string>
     <string name="link">لینک دانلود</string>
+    <string name="item_selected">مورد انتخاب شده</string>
+    <string name="take_photo">گرفتن عکس</string>
 </resources>

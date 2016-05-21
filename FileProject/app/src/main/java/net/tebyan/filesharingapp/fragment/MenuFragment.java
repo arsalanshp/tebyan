@@ -133,7 +133,6 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
@@ -144,13 +143,11 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             case R.id.txt_share_link: {
                 this.dismiss();
                 Utils.shareLink(selected,activity);
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_rename: {
                 this.dismiss();
                 renameFile();
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_move: {
@@ -163,13 +160,11 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_send_file:{
                 this.dismiss();
                 Utils.shareFile(fileNames, selected, activity);
-                handler.clearAllItems();
                 break;
             }
 
@@ -181,13 +176,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }else {
                 NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(), this, 2, activity, selected, "");
             }
-            handler.clearAllItems();
+
                 break;
         }
             case R.id.txt_add_people:{
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
-                handler.clearAllItems();
+
                 break;
             }
             case R.id.txt_zip: {
@@ -203,19 +198,17 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 }else{
                     Utils.zipFile(selected.substring(0,selected.length()-1), (FragmentActivity)activity,"home");
                 }
-                handler.clearAllItems();
+
                 break;
             }
             case R.id.txt_remove: {
                 this.dismiss();
                 Utils.deleteFile(selected, (FragmentActivity)activity, "home");
-                handler.clearAllItems();
                 break;
             }
             case R.id.txt_favorite: {
                 this.dismiss();
             Utils.favoriteFile(selected,(FragmentActivity) activity);
-                handler.clearAllItems();
                 break;
             }
 
@@ -230,11 +223,6 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     @Override
     public void onNewFolder(String name) {
 
-    }
-
-
-    public interface ShowMenu {
-        void showContextMenu(String fileIds, String fileNames,int type);
     }
 
     @Override
@@ -311,7 +299,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                     .setHeader("userToken", Application.getToken(activity))
                     .setBodyParameter("canEdit", canEdit)
                     .setBodyParameter("ps",ps)
-                    .setBodyParameter("friendIds",friendIds)
+                    .setBodyParameter("friendId",friendIds)
                     .setBodyParameter("fileid",fileID)
                     .setBodyParameter("shareText","پیغام")
                     .asJsonObject()
