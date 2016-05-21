@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Application.currentActivity=this;
         openRightMenuFragment("home", 0);
+        uploadFiles = new ArrayList<PhotoModel>();
         scheduleAlarm();
         activity = this;
         Application.currentActivity = this;
@@ -296,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     uploadFiles.add(new PhotoModel(data.getData().getPath(), true));
                 }
             }
+            Application.UploadFolder = Application.CurrentFolder;
             if (this.uploadFiles != null && !this.uploadFiles.isEmpty()) {
                 this.sizeOfPhotos = this.uploadFiles.size();
                 this.indexInPhotos = this.sizeOfPhotos - 1;
@@ -558,17 +560,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void uploadPic(List<PhotoModel> files, int index) {
+        fab.setOnClickListener(null);
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
         /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
         File file = new File(files.get(index).getOriginalPath());
         Ion.with(this)
-                .load(WebserviceUrl.UploadServiceUrl + "?folder=" +Application.CurrentFolder)
+                .load(WebserviceUrl.UploadServiceUrl + "?folder=" + Application.UploadFolder)
                 .setHeader("userToken", Application.getToken(this))
-                .setMultipartParameter("name", "test")
+                .setMultipartParameter("name", file.getName())
                 .setMultipartParameter("filename", file.getName().trim())
-                .setMultipartFile("image", "image/*", file)
+                .setMultipartFile("file", Utils.getMimeType(file), file)
                 .as(FileUploadResultModel.class)
                 .setCallback(new FutureCallback<FileUploadResultModel>() {
                     @Override
@@ -590,6 +593,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 activity.indexInPhotos--;
                                 uploadPic(uploadFiles, indexInPhotos);
                             } else {
+                                uploadFiles.clear();
+                                fab.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        initUploadMenu();
+                                    }
+                                });
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -808,6 +818,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
+
     public void pasteFile() {
         if (Application.fileCopied) {
             Application.fileCopied = false;
