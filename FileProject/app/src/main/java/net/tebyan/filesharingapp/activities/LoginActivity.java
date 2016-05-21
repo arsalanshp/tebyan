@@ -26,6 +26,7 @@ import com.tuenti.smsradar.SmsListener;
 import com.tuenti.smsradar.SmsRadar;
 
 import net.tebyan.filesharingapp.R;
+import net.tebyan.filesharingapp.classes.Application;
 import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
 
@@ -71,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Application.currentActivity=this;
         activity = this;
         forceRTLIfSupported();
         initToolbar();

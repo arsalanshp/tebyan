@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@string/upload"
+            android:text="@string/file"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -44,7 +44,7 @@
         android:weightSum="3">
 
         <ImageView
-            android:id="@+id/img_upload_film"
+            android:id="@+id/img_upload_pic"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="5dp"
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@string/folder"
+            android:text="@string/nnf_new_folder"
             android:textSize="13sp" />
     </LinearLayout>
 </LinearLayout>

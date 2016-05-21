@@ -115,9 +115,10 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        setToolbar();
-        //forceRTLIfSupported();
+        Application.currentActivity = this;
         activity = this;
+        setToolbar();
+        forceRTLIfSupported();
         initView();
         onClickView();
         getNetworkUser(this);
@@ -217,7 +218,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
         Ion.with(this)
                 .load(WebserviceUrl.SiteUrl + "/api/Account/UpdateAvatar")
-                .setHeader("userToken",Application.getToken(this))
+                .setHeader("userToken", Application.getToken(this))
                 .setMultipartParameter("name", "noop")
                 .setMultipartParameter("filename", "ahmad.jpg")
                 .setMultipartFile("image", "image/jpg", new File(fileUploadInput.url))
@@ -251,7 +252,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         firstName = (EditText) findViewById(R.id.firstName);
         lastName = (EditText) findViewById(R.id.lastName);
         userName = (EditText) findViewById(R.id.username);
-        profile_pic= (ImageView) findViewById(R.id.profile_pic);
+        profile_pic = (ImageView) findViewById(R.id.profile_pic);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         profile_pic = (ImageView) findViewById(R.id.profile_pic);
     }

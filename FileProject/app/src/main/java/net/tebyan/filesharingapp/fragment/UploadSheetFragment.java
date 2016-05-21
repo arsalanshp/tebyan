@@ -45,13 +45,10 @@ import java.util.List;
  */
 public class UploadSheetFragment extends BottomSheetDialogFragment implements View.OnClickListener {
     public String selected;
-    private String fileNames;
-    public ImageView imgUpload, imgUploadMovie, imgFolder;
+    public ImageView imgUpload, imgUploadPic, imgFolder;
     public int SELECT_IMAGE_CODE = 1;
-    public int SELECT_FILM_CODE = 3;
-    public ArrayList<PhotoModel> uploadFiles;
-    private int sizeOfPhotos;
-    public int indexInPhotos;
+    public int SELECT_FILE_CODE = 3;
+
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
 
@@ -73,10 +70,10 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
     public void setupDialog(Dialog dialog, int style) {
 
         super.setupDialog(dialog, style);
-        dialog.setTitle("جدید");
+        dialog.setTitle(R.string.new_item);
         View contentView = View.inflate(getContext(), R.layout.upload_sheet_layout, null);
-        imgUploadMovie = (ImageView) contentView.findViewById(R.id.img_upload_film);
-        imgUploadMovie.setOnClickListener(this);
+        imgUploadPic = (ImageView) contentView.findViewById(R.id.img_upload_pic);
+        imgUploadPic.setOnClickListener(this);
         imgFolder = (ImageView) contentView.findViewById(R.id.img_new_folder);
         imgFolder.setOnClickListener(this);
         imgUpload = (ImageView) contentView.findViewById(R.id.img_upload_file);
@@ -98,7 +95,7 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 dismiss();
                 break;
             }
-            case R.id.img_upload_film: {
+            case R.id.img_upload_pic: {
                 ((MainActivity)getActivity()).startPhotoSelector();
                 dismiss();
                 break;
@@ -111,7 +108,7 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
                 i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
                 i.putExtra(FilePickerActivity.EXTRA_TYPE, "/");
-                getActivity().startActivityForResult(i, SELECT_FILM_CODE);
+                getActivity().startActivityForResult(i, SELECT_FILE_CODE);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 dismiss();
                 break;
@@ -119,62 +116,6 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
 
 
         }
-    }
-
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return super.onCreateDialog(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    public static String getRealPathFromURI(FragmentActivity activity, Uri contentUri) {
-        String path = contentUri.getPath();
-        return path;
-    }
-
-    public void uploadPic(List<PhotoModel> files, int index, final FragmentActivity activity) {
-        FileUploadInput fileUploadInput = new FileUploadInput();
-        fileUploadInput.index = index;
-        fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
-        File file = new File(files.get(index).getOriginalPath());
-        Ion.with(activity)
-                .load(WebserviceUrl.UploadServiceUrl + "?folder=" + Application.CurrentFolder.trim())
-                .setHeader("userToken", Application.getToken(activity))
-                .setMultipartParameter("name", "test")
-                .setMultipartParameter("filename", file.getName().trim())
-                .setMultipartFile("file", "image/jpeg", file)
-                .as(FileUploadResultModel.class)
-                .setCallback(new FutureCallback<FileUploadResultModel>() {
-                    @Override
-                    public void onCompleted(Exception e, FileUploadResultModel result) {
-                        if (result != null) {
-                            if (result.Error == null) {
-                                if (result.Data != null && !result.Data.FileID.equals(""))
-                                    Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
-                                else {
-                                    Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-                                    //Toast.makeText(activity, "[index : " + activity.indexInPhotos + "] file NOT uploaded", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-/*
-                            Toast.makeText(activity, "[index : " + activity.indexInPhotos + "] Error : " + result.Error.ErrorMessage, Toast.LENGTH_SHORT).show();
-*/
-                            }
-                            if (indexInPhotos > 0) {
-                                indexInPhotos--;
-                                uploadPic(uploadFiles, indexInPhotos, activity);
-                            } else {
-                                Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
     }
 
 }
