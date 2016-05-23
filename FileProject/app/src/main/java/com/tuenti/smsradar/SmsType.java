@@ -39,10 +39,10 @@ public enum SmsType {
 	}
 
 	/**
-	 * Create a new SmsType using the sms type value represented with integers in the Sms content provider.
+	 * Create a new_icon SmsType using the sms type value represented with integers in the Sms content provider.
 	 *
 	 * @param value used to translate into SmsType
-	 * @return new SmsType associated to the value passed as parameter
+	 * @return new_icon SmsType associated to the value passed as parameter
 	 */
 	public static SmsType fromValue(int value) {
 		for (SmsType smsType : values()) {

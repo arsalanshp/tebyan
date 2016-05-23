@@ -33,7 +33,7 @@ public class NewFolderFragment extends NewItemFragment {
     }
 
  /*   public static void showDialog(final FragmentManager fm, final OnNewFolderListener listener, int type, Activity activity, String currentFileID, String fileLocation, String fileSize, String fileDate) {
-        NewItemFragment d = new NewFolderFragment();
+        NewItemFragment d = new_icon NewFolderFragment();
         d.setListener(listener, type, activity, currentFileID);
         d.show(fm, TAG);
     }*/

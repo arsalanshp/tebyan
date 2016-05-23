@@ -70,10 +70,10 @@ public class ZoomAnimation implements Animation {
 				// Get the current length
 				float length = vector.calculateLength();
 				
-				// Multiply length by zoom to get the new length
+				// Multiply length by zoom to get the new_icon length
 				vector.length = length*zoom;
 				
-				// Now deduce the new endpoint
+				// Now deduce the new_icon endpoint
 				vector.calculateEndPoint();
 				
 				xDiff = vector.end.x - startX;

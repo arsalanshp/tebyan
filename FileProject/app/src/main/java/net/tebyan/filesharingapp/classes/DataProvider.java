@@ -108,7 +108,7 @@ public class DataProvider {
         protected void onPostExecute(String json) {
            /* dialog.dismiss();
             if (json != null && json.length() > 0) {
-                FileUploadResultModel result = new Gson().fromJson(json, FileUploadResultModel.class);
+                FileUploadResultModel result = new_icon Gson().fromJson(json, FileUploadResultModel.class);
                 try {
                     if (result != null) {
                         if (result.Error == null) {

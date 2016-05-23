@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +32,7 @@ import net.tebyan.filesharingapp.classes.NewFolderFragment;
 import net.tebyan.filesharingapp.classes.NewItemFragment;
 import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
+import net.tebyan.filesharingapp.fragment.FriendListFragment;
 import net.tebyan.filesharingapp.model.FileUploadInput;
 import net.tebyan.filesharingapp.model.GetAccountInfoModel;
 
@@ -49,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
     boolean lockEditText = true;
     ProgressDialog builder;
     ProfileActivity activity;
+    public FragmentManager fragmentManager;
     private int SELECT_IMAGE_CODE = 1;
     private int sizeOfPhotos;
 
@@ -119,10 +123,24 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         activity = this;
         setToolbar();
         forceRTLIfSupported();
+        initFragment("friendList");
         initView();
-        onClickView();
+
+       /* onClickView();
         getNetworkUser(this);
-        disableEditTexts(firstName, lastName, userName);
+        disableEditTexts(firstName, lastName, userName);*/
+    }
+
+    private void initFragment(String tag) {
+        Fragment fragment = new FriendListFragment();
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
+        //android.R.animator.fade_out);
+        fragmentTransaction.replace(R.id.frame_profile, fragment, tag);
+        fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.commit();
+
     }
 
     public void showProgressDialog() {
@@ -215,7 +233,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
-        /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
+        /*new_icon DataProvider.UploadFileTask(activity).execute(new_icon FileUploadInput[]{fileUploadInput});*/
         Ion.with(this)
                 .load(WebserviceUrl.SiteUrl + "/api/Account/UpdateAvatar")
                 .setHeader("userToken", Application.getToken(this))

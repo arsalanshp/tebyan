@@ -127,12 +127,12 @@ public class CameraFragment extends android.support.v4.app.Fragment implements V
             allIntents.add(intent);
         }
 
-      /*  Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      /*  Intent galleryIntent = new_icon Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image*//*");
         List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
         for (ResolveInfo res : listGallery) {
-            Intent intent = new Intent(galleryIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            Intent intent = new_icon Intent(galleryIntent);
+            intent.setComponent(new_icon ComponentName(res.activityInfo.packageName, res.activityInfo.name));
             intent.setPackage(res.activityInfo.packageName);
             *//*allIntents.add(intent);*//*
         }*/

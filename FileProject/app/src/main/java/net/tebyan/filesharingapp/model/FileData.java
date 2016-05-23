@@ -16,6 +16,7 @@ public class FileData {
     public String FileTypeIcon;
     public String MonthStr;
     public String SharedBy;
+    public boolean IsNewShare;
     public String FileContent;
     public boolean isHeader = false;
     public boolean Deleted;

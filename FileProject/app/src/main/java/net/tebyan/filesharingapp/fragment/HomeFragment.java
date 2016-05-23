@@ -43,7 +43,6 @@ import net.tebyan.filesharingapp.model.GetFileModel_;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 /**
  * Created by v.karimi on 4/24/2016.
@@ -71,7 +70,6 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public ImageView imgMore;
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
-    private ArrayList<FileData> fileDatas;
     private int[] pos = new int[2];
     private String fileSearched = "";
 
@@ -81,10 +79,8 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         view = inflater.inflate(R.layout.home_layout, container, false);
         activity = getActivity();
         initUI();
-        /*initData();*/
         token = Application.getToken(getActivity());
         adapter.notifyDataSetChanged();
-        rv.setAdapter(adapter);
         return view;
     }
 
@@ -118,7 +114,6 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void initData() {
         data = new GetFileModel_();
         type = getArguments().getInt("type");
-
         switch (type) {
             case 0: {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
@@ -148,8 +143,10 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void setNewAdapter(int type) {
         listAdapter=new FolderListAdapter(getActivity(),data,type);
         adapter = new FolderAdapter(getActivity(), data, type);
+        listAdapter.setBarHandler(this);
         adapter.setBarHandler(this);
         adapter.setHandler(this);
+        listAdapter.setHandler(this);
         adapter.setRefreshHandler(this);
         isTablet(activity);
         if (isTablet(activity)) {
@@ -214,7 +211,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         notifCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, 10);
 
 
-        notifCount.setOnClickListener(new View.OnClickListener() {
+        notifCount.setOnClickListener(new_icon View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 setNotifCount(0);
@@ -286,15 +283,16 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 if (changeView) {
                     rv.setLayoutManager(new LinearLayoutManager(getActivity()));
                     listAdapter = new FolderListAdapter(getActivity(), data, type);
-                    /*listAdapter.setHandler(this);*/
+                    listAdapter.setHandler(this);
+                    listAdapter.setBarHandler(this);
                     listAdapter.setRefreshHandler(this);
                     rv.setHasFixedSize(true);
                     rv.setAdapter(listAdapter);
-                    adapter.notifyDataSetChanged();
+                    listAdapter.notifyDataSetChanged();
                 } else {
                     if (isTablet(getActivity())) {
                         rv.setLayoutManager(manager);
-                        /*adapter=new FolderAdapter(getActivity(),data,type);*/
+                        /*adapter=new_icon FolderAdapter(getActivity(),data,type);*/
                         /*adapter.setHandler(this);*/
                         adapter.setRefreshHandler(this);
                         adapter.notifyDataSetChanged();
@@ -392,6 +390,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                             }
                             case 1: {
                                 getSharedWithMe("Size");
+                                adapter.notifyDataSetChanged();
                                 break;
                             }
                             case 2: {
@@ -465,7 +464,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 listAdapter.selectedItems.clear();
             }
         } else
-            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
     }
 
     private int[] addHeaders(GetFileModel_ result) {
@@ -519,6 +518,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "shareMenuFragment");
             deSelectHandler.clearAllItems();
+
         }
         if (type == 2) {
             bottomSheetDialogFragment = new DeleteMenuFragment();
@@ -558,7 +558,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 url += "&orderBy=" + sortBy + "&order=ASC";
             }
             Ion.with(this).load("GET",url)
-                    .setHeader("userToken", Application.getToken(activity))
+                    .setHeader("userToken", Application.getToken(getActivity()))
                     /*.setBodyParameter("folderId", "")
                     .setBodyParameter("pageIndex", "0")
                     .setBodyParameter("pageSize", "10")
@@ -681,9 +681,13 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
     @Override
     public void initBarMenu() {
-        if(adapter.getSelectedSize()>1) {
+        if(adapter.getSelectedSize()>1||listAdapter.getSelectedSize()>1) {
             linearBarMenu.setVisibility(View.VISIBLE);
-            txtCount.setText(adapter.selectedItems.size()+" "+getString(R.string.item_selected));
+            int count=adapter.selectedItems.size();
+            if(count==0){
+                count=listAdapter.selectedItems.size();
+            }
+            txtCount.setText(count+" "+getString(R.string.item_selected));
         }else{
             /*txtCount.setText(adapter.selectedItems.size()+" "+getString(R.string.item_selected));*/
             linearBarMenu.setVisibility(View.GONE);

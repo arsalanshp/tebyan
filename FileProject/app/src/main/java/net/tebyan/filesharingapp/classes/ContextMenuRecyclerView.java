@@ -36,7 +36,7 @@ public class ContextMenuRecyclerView extends RecyclerView {
     /*    final int longPressPosition = getChildAdapterPosition(originalView);
         if (longPressPosition >= 0) {
             final long longPressId = getAdapter().getItemId(longPressPosition);
-            mContextMenuInfo = new RecyclerContextMenuInfo(longPressPosition, longPressId);
+            mContextMenuInfo = new_icon RecyclerContextMenuInfo(longPressPosition, longPressId);
             return super.showContextMenuForChild(originalView);
         }
         return false;*/

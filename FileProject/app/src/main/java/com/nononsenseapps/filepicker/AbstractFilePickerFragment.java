@@ -131,7 +131,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * @param startPath      path to directory the picker will show upon start
      * @param mode           what is allowed to be selected (dirs, files, both)
      * @param allowMultiple  selecting a single item or several?
-     * @param allowDirCreate can new directories be created?
+     * @param allowDirCreate can new_icon directories be created?
      */
     public void setArgs(final String startPath, final int mode,
                         final boolean allowMultiple, final boolean allowDirCreate) {
@@ -307,7 +307,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * views or restoring state.  It is also useful for fragments that use
      * {@link #setRetainInstance(boolean)} to retain their instance,
      * as this callback tells the fragment when it is fully associated with
-     * the new activity instance.  This is called after {@link #onCreateView}
+     * the new_icon activity instance.  This is called after {@link #onCreateView}
      * and before {@link #onViewStateRestored(Bundle)}.
      *
      * @param savedInstanceState If the fragment is being re-created from
@@ -420,11 +420,11 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
-     * Instantiate and return a new Loader for the given ID.
+     * Instantiate and return a new_icon Loader for the given ID.
      *
      * @param id   The ID whose loader is to be created.
      * @param args Any arguments supplied by the caller.
-     * @return Return a new Loader instance that is ready to start loading.
+     * @return Return a new_icon Loader instance that is ready to start loading.
      */
     @Override
     public Loader<SortedList<T>> onCreateLoader(final int id, final Bundle args) {

@@ -35,6 +35,7 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
     FragmentActivity activity;
     ArrayList<FileData> fileSelected;
     MainActivity.ShowContextMenu handler;
+    public MainActivity.ShowBarMenu barHandler;
     public int type;
     MainActivity.RefreshDirectory refreshHandler;
     public SparseBooleanArray selectedItems;
@@ -51,7 +52,10 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
     public void setHandler(MainActivity.ShowContextMenu  handler) {
         this.handler = handler;
     }
+    public void setBarHandler(MainActivity.ShowBarMenu handler) {
 
+        this.barHandler = handler;
+    }
     public void setRefreshHandler(MainActivity.RefreshDirectory handler) {
         this.refreshHandler = handler;
     }
@@ -127,6 +131,10 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                 customViewHolder.imgTick.setSelected(false);
             }
         }
+
+    }
+    public int getSelectedSize(){
+        return selectedItems.size();
     }
  /*   public void getAllItems() {
 
@@ -198,8 +206,6 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
         @Override
         public boolean getAllItems() {
             for (int i = 0; i < data.Data.Files.size(); i++) {
-               /* View view=this;
-                imgTick= (ImageView) view.findViewById(R.id.img_tick);*/
                 if (imgTick != null) {
                     selectedItems.put(i, true);
                     imgTick.setSelected(true);
@@ -220,18 +226,20 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                 selectedItems.put(getAdapterPosition(), true);
                 imgTick.setSelected(true);
                 imgTick.setVisibility(View.VISIBLE);
-                showContextMenu(getSelectedItems(), getFileNames(),type);
+                handler.showContextMenu(getSelectedItems(), getFileNames(), type);
             } else {
                 if (!data.Data.Files.get(getAdapterPosition()).IsFolder) {
                     if (imgTick != null) {
                         if (selectedItems.get(getAdapterPosition(), false)) {
                             selectedItems.delete(getAdapterPosition());
                             imgTick.setSelected(false);
+                            barHandler.initBarMenu();
 
                         } else {
                             selectedItems.put(getAdapterPosition(), true);
                             imgTick.setSelected(true);
                             imgTick.setVisibility(View.VISIBLE);
+                            barHandler.initBarMenu();
                         }
                     }
                 } else {
@@ -240,11 +248,13 @@ public class FolderListAdapter extends RecyclerView.Adapter<FolderListAdapter.Cu
                             if (selectedItems.get(getAdapterPosition(), false)) {
                                 selectedItems.delete(getAdapterPosition());
                                 imgTick.setSelected(false);
+                                barHandler.initBarMenu();
 
                             } else {
                                 selectedItems.put(getAdapterPosition(), true);
                                 imgTick.setSelected(true);
                                 imgTick.setVisibility(View.VISIBLE);
+                                barHandler.initBarMenu();
                             }
                         }
                     } else {

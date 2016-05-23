@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<Folder> folderList = new ArrayList<>();
     ContextMenuRecyclerView rv;
     FolderAdapter adapter;
+    public int typeService;
     String FileID = "";
     public ProgressBar progress_bar;
     String friendIds = "";
@@ -176,22 +177,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @Override
+  /*  @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setNotifCount(0);
         Utils.reloadMainActivity(Application.CurrentFolder, activity, false, true);
-    }
+    }*/
 
     /*public void setAdapter() {
         isTablet(getApplicationContext());
-        adapter = new FolderAdapter(activity, *//*folderList,*//* data,false);
+        adapter = new_icon FolderAdapter(activity, *//*folderList,*//* data,false);
         if (isTablet(this)) {
             rv.setHasFixedSize(true);
-            rv.setLayoutManager(new GridLayoutManager(this, 3));
+            rv.setLayoutManager(new_icon GridLayoutManager(this, 3));
         } else {
             rv.setHasFixedSize(true);
-            rv.setLayoutManager(new GridLayoutManager(this, 2));
+            rv.setLayoutManager(new_icon GridLayoutManager(this, 2));
         }
         registerForContextMenu(rv);
         rv.setAdapter(adapter);
@@ -209,6 +210,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Application.currentActivity=this;
+        /*typeService=getIntent().getIntExtra("type",-1);*/
+        /*if(typeService==1) {
+            openRightMenuFragment("shareWithMe", 1);
+        }else{
+            openRightMenuFragment("home", 0);
+        }*/
         openRightMenuFragment("home", 0);
         uploadFiles = new ArrayList<PhotoModel>();
         scheduleAlarm();
@@ -227,7 +234,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
     }
+    @Override
+    public void onNewIntent(Intent newIntent) {
+        this.setIntent(newIntent);
+        typeService=getIntent().getIntExtra("type",-1);
+        if(typeService==1) {
+            openRightMenuFragment("shareWithMe", 1);
+        }else{
+            openRightMenuFragment("home", 0);
+        }
 
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -486,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 alertDialog.dismiss();
             }
         });
-        // AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(R.string.new_item);
+        // AlertDialog.Builder builder = new_icon AlertDialog.Builder(this).setTitle(R.string.new_item);
         // .setIcon(android.R.drawable.ic_dialog_alert);
 //        alertDialog = builder.create();
 //        alertDialog.setView(view, 0, 0, 0, 0);
@@ -567,10 +584,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FileUploadInput fileUploadInput = new FileUploadInput();
         fileUploadInput.index = index;
         fileUploadInput.url = ((PhotoModel) files.get(index)).getOriginalPath();
-        /*new DataProvider.UploadFileTask(activity).execute(new FileUploadInput[]{fileUploadInput});*/
+        /*new_icon DataProvider.UploadFileTask(activity).execute(new_icon FileUploadInput[]{fileUploadInput});*/
         File file = new File(files.get(index).getOriginalPath());
         fabProgress.show();
-        Application.UploadFolder=Application.CurrentFolder;
+
         Ion.with(this)
                 .load(WebserviceUrl.UploadServiceUrl + "?folder=" + Application.UploadFolder)
                 .setHeader("userToken", Application.getToken(this))

@@ -144,7 +144,7 @@ public class Utils {
             id = downloadManager.enqueue(request);
         }
         /*final ProgressDialog mProgressDialog;
-        mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog = new_icon ProgressDialog(activity);
         mProgressDialog.setTitle(activity.getString(R.string.downloading));
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(false);
@@ -154,15 +154,15 @@ public class Utils {
         Ion.with(activity)
                 .load(WebserviceUrl.DownloadFile + Application.getToken(activity) + WebserviceUrl.FileIdDownload + fileId)
                 .progressDialog(mProgressDialog)
-                .progress(new ProgressCallback() {
+                .progress(new_icon ProgressCallback() {
                     @Override
                     public void onProgress(long downloaded, long total) {
                         float percent = (float) downloaded / total;
                         mProgressDialog.setProgress((int) percent);
                     }
                 })
-                .write(new File(folder + "/" + filename))
-                .setCallback(new FutureCallback<File>() {
+                .write(new_icon File(folder + "/" + filename))
+                .setCallback(new_icon FutureCallback<File>() {
                     @Override
                     public void onCompleted(Exception e, File file) {
                         if (e == null) {

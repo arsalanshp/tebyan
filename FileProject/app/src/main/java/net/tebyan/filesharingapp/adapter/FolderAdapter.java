@@ -48,6 +48,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
         this.handler = handler;
     }
     public void setBarHandler(MainActivity.ShowBarMenu handler) {
+
         this.barHandler = handler;
     }
     public void setRefreshHandler(MainActivity.RefreshDirectory handler) {
@@ -95,6 +96,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
                     .load(WebserviceUrl.SiteUrl + data.Data.Files.get(i).FileTypeIcon);
             if (customViewHolder.txtDate != null) {
                 customViewHolder.txtDate.setText(data.Data.Files.get(i).MonthStr);
+            }
+            if (customViewHolder.imgNewShare != null&&data.Data.Files.get(i).IsNewShare) {
+                customViewHolder.imgNewShare.setVisibility(View.VISIBLE);
             }
             if (data.Data.Files.get(i).Stared == null && customViewHolder.imgFavorite != null) {
                 customViewHolder.imgFavorite.setVisibility(View.GONE);
@@ -154,7 +158,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, MainActivity.SelectedItems,MainActivity.deSelectedItems {
         protected TextView txtTitle, txtDate, txtHeader, txtFolderTitle;
-        public ImageView imgIconType, imgShared, imgFavorite, imgThumbnail, imgMore, imgTick;
+        public ImageView imgIconType, imgShared, imgFavorite, imgThumbnail, imgMore, imgTick,imgNewShare;
 
         FrameLayout container;
 
@@ -167,6 +171,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
             this.txtDate = (TextView) view.findViewById(R.id.txt_date);
             this.imgFavorite = (ImageView) view.findViewById(R.id.img_favorite);
             this.imgMore = (ImageView) view.findViewById(R.id.img_more);
+            this.imgNewShare = (ImageView) view.findViewById(R.id.img_new);
             this.imgTick = (ImageView) view.findViewById(R.id.img_tick);
             this.imgIconType = (ImageView) view.findViewById(R.id.img_type);
             HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
@@ -202,8 +207,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
         @Override
         public boolean getAllItems() {
             for (int i = 0; i < data.Data.Files.size(); i++) {
-               /* View view=this;
-                imgTick= (ImageView) view.findViewById(R.id.img_tick);*/
                 if (imgTick != null) {
                     selectedItems.put(i, true);
                     imgTick.setSelected(true);
@@ -216,27 +219,27 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.CustomView
                 return true;
         }
        /* public void showContextMenu(String fileIds, String fileNames, int type) {
-            Bundle bundle = new Bundle();
+            Bundle bundle = new_icon Bundle();
             bundle.putString("index", fileIds);
             bundle.putString("fileNames", fileNames);
             if (type == 0) {
-                MenuFragment bottomSheetDialogFragment = new MenuFragment();
+                MenuFragment bottomSheetDialogFragment = new_icon MenuFragment();
                 bottomSheetDialogFragment.setHandler(this);
                 bottomSheetDialogFragment.setArguments(bundle);
                 bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "menuFragment");
             }
             if (type == 1) {
-                ShareMenuFragment bottomSheetDialogFragment = new ShareMenuFragment();
+                ShareMenuFragment bottomSheetDialogFragment = new_icon ShareMenuFragment();
                 bottomSheetDialogFragment.setArguments(bundle);
                 bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "shareMenuFragment");
             }
             if (type == 2) {
-                DeleteMenuFragment bottomSheetDialogFragment = new DeleteMenuFragment();
+                DeleteMenuFragment bottomSheetDialogFragment = new_icon DeleteMenuFragment();
                 bottomSheetDialogFragment.setArguments(bundle);
                 bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "deleteMenuFragment");
             }
             if (type == 3) {
-                FavoriteMenuFragment bottomSheetDialogFragment = new FavoriteMenuFragment();
+                FavoriteMenuFragment bottomSheetDialogFragment = new_icon FavoriteMenuFragment();
                 bottomSheetDialogFragment.setArguments(bundle);
                 bottomSheetDialogFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), "FavoriteMenuFragment");
             }

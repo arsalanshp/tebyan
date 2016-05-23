@@ -53,7 +53,15 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|left"
                     android:orientation="vertical">
-
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="4dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        android:id="@+id/img_new"
+                        android:src="@drawable/new_icon"/>
 
                     <TextView
                         android:id="@+id/txt_title"

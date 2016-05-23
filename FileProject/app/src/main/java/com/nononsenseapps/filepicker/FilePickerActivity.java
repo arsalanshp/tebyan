@@ -33,7 +33,7 @@ public class FilePickerActivity extends AbstractFilePickerActivity<File> {
     protected AbstractFilePickerFragment<File> getFragment(
             final String startPath, final int mode, final boolean allowMultiple,
             final boolean allowCreateDir, final String type) {
-       // AbstractFilePickerFragment<File> fragment = new FilePickerFragment();
+       // AbstractFilePickerFragment<File> fragment = new_icon FilePickerFragment();
         AbstractFilePickerFragment<File> fragment = FilePickerFragment.newInstance(type);
 
         // startPath is allowed to be null. In that case, default folder should be SD-card and not "/"

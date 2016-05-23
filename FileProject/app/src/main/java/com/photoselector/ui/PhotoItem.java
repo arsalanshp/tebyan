@@ -72,10 +72,10 @@ public class PhotoItem extends LinearLayout implements OnCheckedChangeListener,
 		this.photo = photo;
 		// You may need this setting form some custom ROM(s)
 		/*
-		 * new Handler().postDelayed(new Runnable() {
+		 * new_icon Handler().postDelayed(new_icon Runnable() {
 		 * 
 		 * @Override public void run() { ImageLoader.getInstance().displayImage(
-		 * "file://" + photo.getOriginalPath(), ivPhoto); } }, new
+		 * "file://" + photo.getOriginalPath(), ivPhoto); } }, new_icon
 		 * Random().nextInt(10));
 		 */
 

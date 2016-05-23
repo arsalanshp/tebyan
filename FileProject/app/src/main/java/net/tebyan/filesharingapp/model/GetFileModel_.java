@@ -6,6 +6,7 @@ package net.tebyan.filesharingapp.model;
 public class GetFileModel_ extends MainModel {
     public Files Data;
     public GetFileModel_(){
+
         Data=new Files();
     }
 }

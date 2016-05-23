@@ -11,4 +11,5 @@ public class FriendData {
     public String LastName;
     public String CreateDate;
     public String Shared;
+    public String IsNewFriend;
 }
