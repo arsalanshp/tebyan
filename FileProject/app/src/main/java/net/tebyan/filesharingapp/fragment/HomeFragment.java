@@ -259,7 +259,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                     if (listAdapter != null) {
                         listAdapter.notifyDataSetChanged();
                     }
-                    item.setTitle(getString(R.string.clear_selection));
+                    item.setTitle(getString(R.string.select_all));
 
                 } else {
                     deSelectHandler.clearAllItems();
@@ -319,7 +319,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         if (checkState) {
             selectAction.setTitle(getString(R.string.select_all));
         } else {
-            selectAction.setTitle(getString(R.string.clear_selection));
+            selectAction.setTitle(getString(R.string.select_all));
         }
 
     }

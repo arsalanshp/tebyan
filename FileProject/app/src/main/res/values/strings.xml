@@ -60,7 +60,7 @@
     <string name="sort">مرتب سازی</string>
     <string name="select">انتخاب...</string>
     <string name="clear_selection">پاک کردن</string>
-    <string name="select_all">انتخاب همه</string>
+    <string name="select_all">انتخاب همه/پاک کردن</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
