@@ -122,6 +122,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
     @Override
     public void onClick(View view) {
+        HomeFragment fragment= (HomeFragment) getActivity().getSupportFragmentManager().findFragmentByTag("home");
         switch (view.getId()) {
             case R.id.txt_copy: {
                 this.dismiss();
@@ -133,21 +134,26 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
                 this.dismiss();
                 Utils.downloadFile(fileNames, selected, activity);
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_share_link: {
                 this.dismiss();
-                Utils.shareLink(selected,activity);
+                Utils.shareLink(selected, activity);
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_rename: {
                 this.dismiss();
                 renameFile();
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_move: {
@@ -160,11 +166,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_send_file:{
                 this.dismiss();
                 Utils.shareFile(fileNames, selected, activity);
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
 
@@ -176,13 +184,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }else {
                 NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(), this, 2, activity, selected, "");
             }
-
+            fragment.deSelectHandler.clearAllItems();
                 break;
         }
             case R.id.txt_add_people:{
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
-
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_zip: {
@@ -198,17 +206,19 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 }else{
                     Utils.zipFile(selected.substring(0,selected.length()-1), (FragmentActivity)activity,"home");
                 }
-
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_remove: {
                 this.dismiss();
-                Utils.deleteFile(selected, (FragmentActivity)activity, "home");
+                Utils.deleteFile(selected, (FragmentActivity) activity, "home");
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_favorite: {
                 this.dismiss();
             Utils.favoriteFile(selected,(FragmentActivity) activity);
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
 

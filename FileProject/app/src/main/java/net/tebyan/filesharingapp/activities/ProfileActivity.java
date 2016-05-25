@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -23,24 +22,22 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.photoselector.model.PhotoModel;
-import com.photoselector.ui.PhotoSelectorActivity;
 
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.classes.Application;
-import net.tebyan.filesharingapp.classes.CropCircleTransformation;
 import net.tebyan.filesharingapp.classes.NewFolderFragment;
 import net.tebyan.filesharingapp.classes.NewItemFragment;
 import net.tebyan.filesharingapp.classes.Utils;
 import net.tebyan.filesharingapp.classes.WebserviceUrl;
+import net.tebyan.filesharingapp.fragment.EditProfileFragment;
 import net.tebyan.filesharingapp.fragment.FriendListFragment;
 import net.tebyan.filesharingapp.model.FileUploadInput;
-import net.tebyan.filesharingapp.model.GetAccountInfoModel;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity implements NewItemFragment.OnNewFolderListener {
+public class ProfileActivity extends AppCompatActivity implements NewItemFragment.OnNewFolderListener,View.OnClickListener {
 
     public ArrayList<PhotoModel> uploadFiles;
     public int indexInPhotos;
@@ -101,6 +98,16 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1)
+            getSupportFragmentManager().popBackStack();
+        else {
+            super.onBackPressed();
+            finish();
+        }
+    }
+
     public void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_profile);
         setSupportActionBar(toolbar);
@@ -110,10 +117,7 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         }
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.profile, menu);
-        return true;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,62 +154,26 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
         builder.setCancelable(false);
         builder.show();
     }
-
-    public void disableEditTexts(EditText firstName, EditText lastName, EditText userName) {
-        disableEditText(firstName);
-        disableEditText(lastName);
-        disableEditText(userName);
-    }
-
-    public void enableEditTexts(EditText firstName, EditText lastName, EditText userName) {
-        enableEditText(firstName);
-        enableEditText(lastName);
-        enableEditText(userName);
-    }
-
     public void onClickView() {
         fab.setOnClickListener(new View.OnClickListener() {
                                    @Override
                                    public void onClick(View view) {
-                                       if (lockEditText) {
-                                           fab.setImageResource(android.R.drawable.ic_menu_save);
-                                           enableEditTexts(firstName, lastName, userName);
-                                           lockEditText = false;
-                                       } else {
-                                           showProgressDialog();
-                                           fab.setImageResource(android.R.drawable.ic_menu_edit);
-                                           disableEditTexts(firstName, lastName, userName);
-                                           lockEditText = true;
-                                           if (firstName.getText().toString().equals("") && lastName.getText().toString().equals("") && userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getHint().toString(), lastName.getHint().toString(), userName.getHint().toString(), activity);
-                                           } else if (firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && !userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getHint().toString(), lastName.getText().toString(), userName.getText().toString(), activity);
-                                           } else if (!firstName.getText().toString().equals("") && lastName.getText().toString().equals("") && !userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getText().toString(), lastName.getHint().toString(), userName.getText().toString(), activity);
-                                           } else if (!firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getText().toString(), lastName.getText().toString(), userName.getHint().toString(), activity);
-                                           } else if (firstName.getText().toString().equals("") && lastName.getText().toString().equals("") && userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getHint().toString(), lastName.getHint().toString(), userName.getText().toString(), activity);
-                                           } else if (!firstName.getText().toString().equals("") && lastName.getText().toString().equals("") && userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getText().toString(), lastName.getHint().toString(), userName.getHint().toString(), activity);
-                                           } else if (firstName.getText().toString().equals("") && !lastName.getText().toString().equals("") && userName.getText().toString().equals("")) {
-                                               editProfile(firstName.getHint().toString(), lastName.getText().toString(), userName.getHint().toString(), activity);
-                                           } else {
-                                               editProfile(firstName.getText().toString(), lastName.getText().toString(), userName.getText().toString(), activity);
-                                           }
-                                       }
+                                       initEditProfile("editProfile");
                                    }
                                }
         );
 
-        profile_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ProfileActivity.this, PhotoSelectorActivity.class);
-                intent.putExtra(PhotoSelectorActivity.KEY_MAX, 1);
-                startActivityForResult(intent, SELECT_IMAGE_CODE);
-            }
-        });
+    }
+
+    private void initEditProfile(String tag) {
+        Fragment fragment = new EditProfileFragment();
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
+        //android.R.animator.fade_out);
+        fragmentTransaction.replace(R.id.frame_profile, fragment, tag);
+        fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -250,53 +218,19 @@ public class ProfileActivity extends AppCompatActivity implements NewItemFragmen
                 });
     }
 
-    private void disableEditText(EditText editText) {
-        editText.setEnabled(false);
-        editText.setCursorVisible(false);
-    }
-
-    private void enableEditText(EditText editText) {
-        editText.setEnabled(true);
-        editText.setCursorVisible(true);
-    }
-
-    public void setHint(String firstNameHint, String lastNameHint, String usernameHint) {
-        firstName.setHint(firstNameHint);
-        lastName.setHint(lastNameHint);
-        userName.setHint(usernameHint);
-    }
-
     public void initView() {
-        firstName = (EditText) findViewById(R.id.firstName);
-        lastName = (EditText) findViewById(R.id.lastName);
-        userName = (EditText) findViewById(R.id.username);
-        profile_pic = (ImageView) findViewById(R.id.profile_pic);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        profile_pic = (ImageView) findViewById(R.id.profile_pic);
+        fab.setOnClickListener(this);
     }
 
-    public void getNetworkUser(final Activity activity) {
-        if (Utils.isOnline(this)) {
-            showProgressDialog();
-            Ion.with(this)
-                    .load(WebserviceUrl.GetAccountInfo).setTimeout(100000000)
-                    .setHeader("userToken", Application.getToken(activity))
-                    .as(GetAccountInfoModel.class)
-                    .setCallback(new FutureCallback<GetAccountInfoModel>() {
-                                     @Override
-                                     public void onCompleted(Exception e, GetAccountInfoModel accountInfo) {
-                                         builder.cancel();
-                                         if (accountInfo != null && accountInfo.Data != null && accountInfo.Error == null && e == null) {
-                                             setHint(accountInfo.Data.FirstName, accountInfo.Data.LastName, accountInfo.Data.Username);
-                                             String imageUrl = WebserviceUrl.SiteUrl + accountInfo.Data.AvatarUrl;
-                                             Ion.with(profile_pic).transform(new CropCircleTransformation()).load(imageUrl);
-                                         } else {
-                                             Toast.makeText(ProfileActivity.this, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
-                                         }
-                                     }
-                                 }
-                    );
-        } else
-            Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.fab :{
+                initEditProfile("editProfile");
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.system.ErrnoException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,12 +49,15 @@ public class CameraFragment extends android.support.v4.app.Fragment implements V
     private CropImageView cropProfileImage;
     private Uri cropImageUri;
     public String name;
+    public FloatingActionButton fab;
     private ImageView imgConfirmProfile;
     public String path;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.capture_image_layout,container,false);
+        fab= (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
         context=container.getContext();
         initUI();
         onLoadImage();
@@ -83,6 +87,12 @@ public class CameraFragment extends android.support.v4.app.Fragment implements V
             ((MainActivity) getActivity()).uploadPic(photoList, 0);
         }
         getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override

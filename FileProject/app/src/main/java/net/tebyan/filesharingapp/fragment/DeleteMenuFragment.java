@@ -67,6 +67,7 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
 
     @Override
     public void onClick(View view) {
+        HomeFragment fragment= (HomeFragment) getActivity().getSupportFragmentManager().findFragmentByTag("deleted");
         switch (view.getId()) {
             case R.id.txt_delete_move: {
                 this.dismiss();
@@ -79,16 +80,19 @@ public class DeleteMenuFragment extends BottomSheetDialogFragment implements Vie
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_restore: {
                 this.dismiss();
-                Utils.RestoreFile(selected.substring(0,selected.length()-1), getActivity());
+                Utils.RestoreFile(selected.substring(0, selected.length() - 1), getActivity());
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_delete: {
                 this.dismiss();
                Utils.deleteConfirm(selected.substring(0, selected.length() - 1), getActivity());
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
         }

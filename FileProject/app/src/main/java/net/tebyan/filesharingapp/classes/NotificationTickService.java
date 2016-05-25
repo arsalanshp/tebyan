@@ -195,16 +195,7 @@ public class NotificationTickService extends IntentService {
                                     mNotifyMgr.notify(mNotificationId, notification);
 
                                     stopSelf();
-                                    Ion.with(context)
-                                            .load(WebserviceUrl.RepositoryServiceUrl + "SetNoteShareReaded")
-                                            .setHeader("userToken", Application.getToken(context))
-                                            .setHeader("checkToken", "true")
-                                            .asString()
-                                            .setCallback(new FutureCallback<String>() {
-                                                @Override
-                                                public void onCompleted(Exception e, String result) {
-                                                }
-                                            });
+
                                 }
                             }
                         } else {

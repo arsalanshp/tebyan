@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
@@ -58,6 +59,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public TextView txtCount;
     public Activity activity;
     public CardView linearBarMenu;
+    public FloatingActionButton fab;
     public String title;
     public GridLayoutManager manager;
     //public String currentFolder;
@@ -97,6 +99,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        fab= (FloatingActionButton) getActivity().findViewById(R.id.fab);
         initData();
         changeView = false;
     }
@@ -118,21 +121,26 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             case 0: {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
                 getFiles("", "");
+                    fab.setVisibility(View.VISIBLE);
+
                 break;
             }
             case 1: {
                 getSharedWithMe("Title");
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.sharePeople));
+                fab.setVisibility(View.GONE);
                 break;
             }
             case 2: {
                 getDeletedFiles("Title");
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.deleted));
+                fab.setVisibility(View.GONE);
                 break;
             }
             case 3: {
                 getStaredFiles("Title");
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.favorite_menu));
+                fab.setVisibility(View.GONE);
                 break;
             }
 
@@ -511,26 +519,26 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             bottomSheetDialogFragment = new MenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "menuFragment");
-            deSelectHandler.clearAllItems();
+            linearBarMenu.setVisibility(View.GONE);
         }
         if (type == 1) {
             bottomSheetDialogFragment = new ShareMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "shareMenuFragment");
-            deSelectHandler.clearAllItems();
+            linearBarMenu.setVisibility(View.GONE);
 
         }
         if (type == 2) {
             bottomSheetDialogFragment = new DeleteMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "deleteMenuFragment");
-            deSelectHandler.clearAllItems();
+            linearBarMenu.setVisibility(View.GONE);
         }
         if (type == 3) {
             bottomSheetDialogFragment = new FavoriteMenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
             bottomSheetDialogFragment.show(((FragmentActivity) getActivity()).getSupportFragmentManager(), "FavoriteMenuFragment");
-            deSelectHandler.clearAllItems();
+            linearBarMenu.setVisibility(View.GONE);
         }
 
     }
@@ -570,11 +578,36 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         public void onCompleted(Exception e, GetFileModel_ result) {
                             ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
                             if (result.Data != null && result.Error == null && e == null) {
-                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                    Application.ParrentFolder = "";
-                                else
-                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FileID == null) {
+                                    Application.CurrentFolder = "";
+                                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.shared));
+                                    Application.ParrentFolder = null;
+                                }
+                                else {
+                                    if (result.Data.Navigate.size() == 1) {
+                                        Application.ParrentFolder = result.Data.Navigate.get(0).FileID;
+                                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                    }if( Application.ParrentFolder == result.Data.Navigate.get(0).FileID && result.Data.Navigate.size()==1){
+                                        Application.ParrentFolder="";
+
+                                    }
+                                    if(result.Data.Navigate.size() >1) {
+                                        Application.ParrentFolder = result.Data.Navigate.get(1).FileID;
+                                        Application.CurrentFolder = result.Data.Navigate.get(0).FileID;
+                                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                    }
+                                }
                                 addHeaders(result);
+                                Ion.with(getActivity())
+                                        .load(WebserviceUrl.RepositoryServiceUrl + "SetNoteShareReaded")
+                                        .setHeader("userToken", Application.getToken(getActivity()))
+                                        .setHeader("checkToken", "true")
+                                        .asString()
+                                        .setCallback(new FutureCallback<String>() {
+                                            @Override
+                                            public void onCompleted(Exception e, String result) {
+                                            }
+                                        });
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -598,10 +631,25 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         public void onCompleted(Exception e, GetFileModel_ result) {
                             ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
                             if (result.Data != null && result.Error == null && e == null) {
-                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                    Application.ParrentFolder = "";
-                                else
-                                    Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+                                if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FileID == null) {
+                                    Application.CurrentFolder = "";
+                                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.deleted));
+                                    Application.ParrentFolder = null;
+                                }
+                                else {
+                                    if (result.Data.Navigate.size() == 1) {
+                                        Application.ParrentFolder = result.Data.Navigate.get(0).FileID;
+                                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                    }if( Application.ParrentFolder == result.Data.Navigate.get(0).FileID && result.Data.Navigate.size()==1){
+                                        Application.ParrentFolder="";
+
+                                    }
+                                    if(result.Data.Navigate.size() >1) {
+                                        Application.ParrentFolder = result.Data.Navigate.get(1).FileID;
+                                        Application.CurrentFolder = result.Data.Navigate.get(0).FileID;
+                                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);
+                                    }
+                                }
                                 addHeaders(result);
                             } else
                                 Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();

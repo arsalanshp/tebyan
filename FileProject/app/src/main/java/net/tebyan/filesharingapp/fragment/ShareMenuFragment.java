@@ -85,6 +85,7 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
 
     @Override
     public void onClick(View view) {
+        HomeFragment fragment= (HomeFragment) getActivity().getSupportFragmentManager().findFragmentByTag("shareWithMe");
         switch (view.getId()) {
             case R.id.txt_copy: {
                 this.dismiss();
@@ -96,31 +97,28 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_download: {
                 this.dismiss();
                 Utils.downloadFile(fileNames, selected, getActivity());
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_info: {
                 this.dismiss();
                 NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
-                //Utils.deleteFile(selected, getActivity(), "home");
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
             case R.id.txt_de_share: {
                 this.dismiss();
-                //Utils.favoriteFile(selected,getActivity());
+                fragment.deSelectHandler.clearAllItems();
                 break;
             }
 
         }
-    }
-
-    private void renameFile() {
-
-        NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), null, 1, getActivity());
     }
 
     @Override

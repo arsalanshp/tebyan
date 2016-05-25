@@ -9,17 +9,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import net.tebyan.filesharingapp.R;
 import net.tebyan.filesharingapp.activities.MainActivity;
+import net.tebyan.filesharingapp.classes.Application;
+import net.tebyan.filesharingapp.classes.CropCircleTransformation;
+import net.tebyan.filesharingapp.classes.WebserviceUrl;
 import net.tebyan.filesharingapp.model.FriendData;
-import net.tebyan.filesharingapp.model.GetFriendsModel;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by F.piri on 1/25/2016.
  */
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.CustomViewHolder> {
-    public GetFriendsModel data;
+    public ArrayList<FriendData> data;
     FragmentActivity activity;
     MainActivity.ShowContextMenu handler;
     public MainActivity.ShowBarMenu barHandler;
@@ -27,7 +34,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Cu
     MainActivity.RefreshDirectory refreshHandler;
     public SparseBooleanArray selectedItems;
 
-    public FriendListAdapter(FragmentActivity context, GetFriendsModel data) {
+    public FriendListAdapter(FragmentActivity context, ArrayList<FriendData>  data) {
         super();
         activity = context;
         this.data = data;
@@ -47,13 +54,16 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Cu
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
 
-        FriendData friendData = data.Data.get(i);
+        FriendData friendData = data.get(i);
         customViewHolder.txtFriendName.setText(friendData.FirstName + " " + friendData.LastName);
+        String imageUrl = WebserviceUrl.SiteUrl+"/open/"+"token_"+ Application.getToken(activity)+"/GetAvatar/" + friendData.GuidID+ "?date=" + new Date().getTime();
+        Ion.with(customViewHolder.imgAvatar).transform(new CropCircleTransformation()).load(imageUrl);
+
     }
 
     @Override
     public int getItemCount() {
-        return (null != data.Data ? data.Data.size() : 0);
+        return (null != data ? data.size() : 0);
     }
 
     @Override
@@ -64,12 +74,14 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Cu
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView txtFriendName;
-        public ImageView imgdelete;
+        public ImageView imgdelete,imgNewFriend,imgAvatar;
 
         public CustomViewHolder(View view) {
             super(view);
             this.txtFriendName = (TextView) view.findViewById(R.id.txt_friends_name);
-            this.imgdelete = (ImageView) view.findViewById(R.id.delete_friends);
+            this.imgdelete = (ImageView) view.findViewById(R.id.img_delete_friends);
+            this.imgAvatar = (ImageView) view.findViewById(R.id.img_avatar);
+            this.imgNewFriend = (ImageView) view.findViewById(R.id.img_new);
             imgdelete.setOnClickListener(this);
 
         }

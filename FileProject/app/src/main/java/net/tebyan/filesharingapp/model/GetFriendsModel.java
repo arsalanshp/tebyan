@@ -7,4 +7,12 @@ import java.util.ArrayList;
  */
 public class GetFriendsModel extends MainModel {
     public ArrayList<FriendData> Data;
+
+    public ArrayList<FriendData> getData() {
+        return Data;
+    }
+
+    public void setData(ArrayList<FriendData> data) {
+        Data = data;
+    }
 }

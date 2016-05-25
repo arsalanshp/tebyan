@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Application.currentActivity=this;
+        initNavigation();
         /*typeService=getIntent().getIntExtra("type",-1);*/
         /*if(typeService==1) {
             openRightMenuFragment("shareWithMe", 1);
@@ -678,7 +679,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.nav_home: {
                 // Utils.reloadMainActivity("", activity, false, false);
-                Utils.reloadMainActivity("", activity, false, false, "");
+                openRightMenuFragment("home", 0);
                 break;
             }
             case R.id.nav_favorite: {

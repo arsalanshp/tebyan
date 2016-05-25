@@ -103,6 +103,7 @@ public class UploadSheetFragment extends BottomSheetDialogFragment implements Vi
             }
             case R.id.img_take_photo: {
                 openCameraFragment();
+                this.dismiss();
                 break;
             }
 

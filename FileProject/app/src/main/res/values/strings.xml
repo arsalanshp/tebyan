@@ -132,4 +132,5 @@
     <string name="link">لینک دانلود</string>
     <string name="item_selected">مورد انتخاب شده</string>
     <string name="take_photo">گرفتن عکس</string>
+    <string name="empty_value">پر کردن فیلد الزامی است</string>
 </resources>
