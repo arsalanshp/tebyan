@@ -248,7 +248,8 @@ public class Utils {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
-                                Utils.reloadMainActivity(Application.CurrentFolder, activity);
+                                HomeFragment fragment= (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
+                                fragment.getFiles("Title",Application.CurrentFolder,0);
                                 Toast.makeText(activity, R.string.renamed, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -291,7 +292,7 @@ public class Utils {
                         public void onCompleted(Exception e, GetFileModel result) {
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (result.Data != null && result.Error == null && e == null) {
-                                fragment.getFiles("Title", Application.CurrentFolder);
+                                fragment.getFiles("Title", Application.CurrentFolder,0);
                             }
                         }
                     });
@@ -327,7 +328,7 @@ public class Utils {
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                        fragment.getFiles("Title", Application.CurrentFolder,0);
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
@@ -449,7 +450,7 @@ public class Utils {
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                        fragment.getFiles("Title", Application.CurrentFolder,0);
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
@@ -606,7 +607,7 @@ public class Utils {
                             if (e == null) {
                                 /*Utils.reloadMainActivity(Application.CurrentFolder, activity);*/
                                 HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
-                                fragment.getFiles("Title", Application.CurrentFolder);
+                                fragment.getFiles("Title", Application.CurrentFolder,0);
                                 //Toast.makeText(activity, "success!", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -707,7 +708,7 @@ public class Utils {
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getFiles("Title", Application.CurrentFolder);
+                                        fragment.getFiles("Title", Application.CurrentFolder,0);
                                     }
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);

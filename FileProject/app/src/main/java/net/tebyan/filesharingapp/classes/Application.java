@@ -3,7 +3,6 @@ package net.tebyan.filesharingapp.classes;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 
 /**
  * Created by F.piri on 1/17/2016.
@@ -11,6 +10,8 @@ import android.telephony.TelephonyManager;
 public class Application extends android.app.Application {
     public static String CurrentFolder;
     public static String ParrentFolder;
+    public static String PasteFolder;
+    public static String PasteParentFolder;
     public static String UploadFolder;
     public static String fileIdClicked = "";
     public static boolean fileCopied = false;

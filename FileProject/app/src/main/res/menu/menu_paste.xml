@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.tebyan.filesharingapp.activities.LoginActivity">
+    <item android:id="@+id/action_back"
+        android:title="@string/back"
+        android:menuCategory="secondary"
+        android:orderInCategory="1"
+        android:visible="true"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_arrow_up"/>
+</menu>

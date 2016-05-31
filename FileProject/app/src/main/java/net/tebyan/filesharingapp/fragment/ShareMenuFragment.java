@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -108,7 +109,12 @@ public class ShareMenuFragment extends BottomSheetDialogFragment implements View
             }
             case R.id.txt_info: {
                 this.dismiss();
-                NewFolderFragment.showDialog(getActivity().getSupportFragmentManager(), this, 2, getActivity(), selected, "");
+                String selectArray[] = selected.split(",");
+                if (selectArray.length > 1) {
+                    Toast.makeText(getContext(), getString(R.string.info_error), Toast.LENGTH_LONG).show();
+                } else {
+                    NewFolderFragment.showDialog(((FragmentActivity) getActivity()).getSupportFragmentManager(), this, 2, getActivity(), selected, "");
+                }
                 fragment.deSelectHandler.clearAllItems();
                 break;
             }

@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -62,18 +65,22 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public FloatingActionButton fab;
     public String title;
     public GridLayoutManager manager;
+    public MenuItem searchItemMenu;
     //public String currentFolder;
     public MainActivity.RefreshDirectory handler;
+    public View.OnClickListener snackClickListener;
     boolean isPressed = true;
     public int type;
     public static boolean checkState = true;
     //public String parentFolder;
     public static Boolean changeView = false;
     public ImageView imgMore;
+    public Snackbar snackbar;
     public MainActivity.SelectedItems selectHandler;
     public MainActivity.deSelectedItems deSelectHandler;
     private int[] pos = new int[2];
     private String fileSearched = "";
+    private String searchFile;
 
     @Nullable
     @Override
@@ -101,6 +108,13 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         setHasOptionsMenu(true);
         fab= (FloatingActionButton) getActivity().findViewById(R.id.fab);
         initData();
+        snackClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            getFiles("Title",Application.PasteFolder,0);
+
+            }
+        };
         changeView = false;
     }
 
@@ -120,14 +134,15 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         switch (type) {
             case 0: {
                     ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));
-                getFiles("", "");
+                getFiles("", "",type);
                     fab.setVisibility(View.VISIBLE);
 
                 break;
             }
             case 1: {
                 getSharedWithMe("Title");
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.sharePeople));
+                /*getFiles("", "",type);*/
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.shared));
                 fab.setVisibility(View.GONE);
                 break;
             }
@@ -141,6 +156,14 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 getStaredFiles("Title");
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.favorite_menu));
                 fab.setVisibility(View.GONE);
+                break;
+            }
+            case 5: {
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.search));
+                String text=getArguments().getString("searchText");
+                getSearchedFiles(text);
+                fab.setVisibility(View.GONE);
+
                 break;
             }
 
@@ -227,16 +250,32 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             }
         });*/
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+         searchItemMenu = menu.findItem(R.id.action_search);
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView = (SearchView) MenuItemCompat
-                .getActionView(searchItem);
+                .getActionView(searchItemMenu);
+        if(type==5){
+         searchItemMenu.setVisible(false);
+        }
         searchView.setQueryHint(getString(R.string.search));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String text) {
-                getSearchedFiles(text);
+                /*getSearchedFiles(text);*/
+                searchFile = text;
+                Fragment fragment = new HomeFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                //fragmentTransaction.setCustomAnimations(android.R.animator.fade_in,
+                //android.R.animator.fade_out);
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", 5);
+                bundle.putBoolean("pasteMode", false);
+                bundle.putString("searchText", text);
+                fragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.frame, fragment, "search");
+                fragmentTransaction.addToBackStack("search");
+                fragmentTransaction.commit();
                 return false;
             }
 
@@ -264,6 +303,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                 if (isPressed) {
                     checkState = selectHandler.getAllItems();
                     adapter.notifyDataSetChanged();
+                    initBarMenu();
                     if (listAdapter != null) {
                         listAdapter.notifyDataSetChanged();
                     }
@@ -271,6 +311,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
                 } else {
                     deSelectHandler.clearAllItems();
+                    linearBarMenu.setVisibility(View.GONE);
                     adapter.notifyDataSetChanged();
                     if (listAdapter != null) {
                         listAdapter.notifyDataSetChanged();
@@ -348,7 +389,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         ad.cancel();
                         switch (type) {
                             case 0: {
-                                getFiles("Title", Application.CurrentFolder);
+                                getFiles("Title", Application.CurrentFolder,type);
                                 break;
                             }
                             case 1: {
@@ -371,7 +412,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         ad.cancel();
                         switch (type) {
                             case 0: {
-                                getFiles("Createdate", Application.CurrentFolder);
+                                getFiles("Createdate", Application.CurrentFolder,type);
                                 break;
                             }
                             case 1: {
@@ -393,7 +434,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
                         ad.cancel();
                         switch (type) {
                             case 0: {
-                                getFiles("Size", Application.CurrentFolder);
+                                getFiles("Size", Application.CurrentFolder,type);
                                 break;
                             }
                             case 1: {
@@ -421,11 +462,21 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
 
     }
 
-    public void getFiles(String sortBy, String currentFolder) {
+    public void getFiles(String sortBy, String currentFolder,int type) {
         if (Utils.isOnline((MainActivity)getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
+            String url = null;
+            switch (type){
+                case 0:
+                     url= WebserviceUrl.GetFiles + currentFolder;
+                    break;
+                case 1:
+                     url = WebserviceUrl.GetSharedFilesWithMe + currentFolder;
+                    break;
+                default:
+                    url= WebserviceUrl.GetFiles + currentFolder;
+            }
 
-            String url = WebserviceUrl.GetFiles + currentFolder;
             if (sortBy != null && !sortBy.isEmpty()) {
                 url += "&orderBy=" + sortBy + "&sortOrder=ASC";
             }
@@ -507,6 +558,19 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         }
         return headerPosition;
     }
+    public void showSnackBar(final String pasteFolder){
+         snackbar = Snackbar
+                .make(view, getString(R.string.paste_directory), Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.confirm), snackClickListener);
+        snackbar.setActionTextColor(Color.WHITE);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.DKGRAY);
+        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+        Application.PasteFolder=pasteFolder;
+        snackbar.show();
+
+    }
 
 
   @Override
@@ -514,7 +578,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
         BottomSheetDialogFragment bottomSheetDialogFragment;
         Bundle bundle = new Bundle();
         bundle.putString("index", fileIds);
-        bundle.putString("fileNames", fileNames);
+      bundle.putString("fileNames", fileNames);
         if (type == 0) {
             bottomSheetDialogFragment = new MenuFragment();
             bottomSheetDialogFragment.setArguments(bundle);
@@ -552,7 +616,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(currentFolderName);
         }
         Application.CurrentFolder = currentFolder;
-        getFiles("Title", currentFolder);
+        getFiles("Title", currentFolder,type);
         if(linearBarMenu.getVisibility()==View.VISIBLE) {
             linearBarMenu.setVisibility(View.GONE);
         }
@@ -561,7 +625,7 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
     public void getSharedWithMe(String sortBy) {
         if (Utils.isOnline(getActivity())) {
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
-            String url = WebserviceUrl.GetSharedFilesWithMe+Application.CurrentFolder;
+            String url = WebserviceUrl.GetSharedFilesWithMe;
             if (sortBy != null && !sortBy.isEmpty()) {
                 url += "&orderBy=" + sortBy + "&order=ASC";
             }
@@ -694,19 +758,15 @@ public class HomeFragment extends Fragment implements MainActivity.RefreshDirect
             ((MainActivity) getActivity()).progress_bar.setVisibility(View.VISIBLE);
             try {
                 String encodedStr = URLEncoder.encode(str, "UTF-8");
-
                 Ion.with(this).load(WebserviceUrl.SearchFile + encodedStr)
-                        .setHeader("userToken", token)
+                        .setHeader("userToken", Application.getToken(getActivity()))
                         .as(GetFileModel_.class)
                         .setCallback(new FutureCallback<GetFileModel_>() {
                             @Override
                             public void onCompleted(Exception e, GetFileModel_ result) {
                                 ((MainActivity) getActivity()).progress_bar.setVisibility(View.GONE);
                                 if (result.Data != null && result.Error == null && e == null) {
-                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FolderID == null)
-                                        Application.ParrentFolder = "";
-                                    else
-                                        Application.ParrentFolder = result.Data.Navigate.get(0).FolderID;
+
                                 } else
                                     Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                                 fileSearched = "";

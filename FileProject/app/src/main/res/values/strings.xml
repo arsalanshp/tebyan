@@ -79,7 +79,7 @@
     <string name="sharePeople"> اشتراک با دیگران</string>
     <string name="shared"> اشتراک با من</string>
     <string name="new_friend">دوست جدید</string>
-    <string name="share_">اشتراک در شبکه های دیگر</string>
+    <string name="share_">ارسال فایل در شبکه های دیگر</string>
     <string name="upgrade"> ارتقا حافظه</string>
     <string name="used"> استفاده شده است</string>
     <string name="remained">حافظه باقی مانده</string>
@@ -89,7 +89,7 @@
     <string name="nnf_new_folder">پوشه جدید</string>
     <string name="ok">تایید</string>
 
-    <string name="number">شماره</string>
+    <string name="number">شماره(انگلیسی)</string>
     <string name="firstName">نام</string>
     <string name="lastName">نام خانوادگی</string>
 
@@ -133,4 +133,6 @@
     <string name="item_selected">مورد انتخاب شده</string>
     <string name="take_photo">گرفتن عکس</string>
     <string name="empty_value">پر کردن فیلد الزامی است</string>
+    <string name="paste_directory">رفتن به مسیر جدید فایل</string>
+    <string name="back_exit">برای خروج دکمه ی بازگشت را مجددا فشار دهید</string>
 </resources>

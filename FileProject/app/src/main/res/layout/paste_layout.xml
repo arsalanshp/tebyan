@@ -6,7 +6,19 @@
     android:orientation="vertical"
     android:layout_gravity="right"
     android:gravity="right">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/abc_action_bar_default_height_material"
+    android:background="#dddddd">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center"
+        android:layout_margin="4dp"
+        android:id="@+id/img_back"
+        android:src="@drawable/ic_arrow_left"/>
 
+</LinearLayout>
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"

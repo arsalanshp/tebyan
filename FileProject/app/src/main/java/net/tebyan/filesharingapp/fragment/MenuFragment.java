@@ -38,14 +38,17 @@ import java.util.ArrayList;
 /**
  * Created by v.karimi on 5/1/2016.
  */
-public class MenuFragment extends BottomSheetDialogFragment implements View.OnClickListener,NewItemFragment.OnNewFolderListener {
+public class MenuFragment extends BottomSheetDialogFragment implements View.OnClickListener, NewItemFragment.OnNewFolderListener
+        , MainActivity.ShowPasteDirectory {
     public String selected;
     private String fileNames;
-    public Activity activity;
-    public LinearLayout shareLayout,renameLayout;
+    public FragmentActivity activity;
+    public LinearLayout shareLayout, renameLayout;
+    public View.OnClickListener snackClickListener;
     public MainActivity.deSelectedItems handler;
+    public View contentView;
     String friendIds = "";
-    public TextView txtDownload, txtShareLink, txtSendFile, txtAddPeople, txtMove, txtRename,txtInfo, txtRemove, txtCopy, txtFavorite,txtZip;
+    public TextView txtDownload, txtShareLink, txtSendFile, txtAddPeople, txtMove, txtRename, txtInfo, txtRemove, txtCopy, txtFavorite, txtZip;
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
 
@@ -67,17 +70,18 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity=activity;
+        this.activity = (FragmentActivity) activity;
     }
 
-    public void setHandler(MainActivity.deSelectedItems handler){
-        this.handler=handler;
+    public void setHandler(MainActivity.deSelectedItems handler) {
+        this.handler = handler;
     }
+
     @Override
     public void setupDialog(Dialog dialog, int style) {
 
         super.setupDialog(dialog, style);
-        View contentView = View.inflate(getContext(), R.layout.menu_item_layout, null);
+        contentView = View.inflate(getContext(), R.layout.menu_item_layout, null);
         txtDownload = (TextView) contentView.findViewById(R.id.txt_download);
         txtDownload.setOnClickListener(this);
         txtFavorite = (TextView) contentView.findViewById(R.id.txt_favorite);
@@ -100,8 +104,8 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
         txtRemove.setOnClickListener(this);
         txtCopy = (TextView) contentView.findViewById(R.id.txt_copy);
         txtCopy.setOnClickListener(this);
-        shareLayout= (LinearLayout) contentView.findViewById(R.id.share_file_layout);
-        renameLayout= (LinearLayout) contentView.findViewById(R.id.rename_layout);
+        shareLayout = (LinearLayout) contentView.findViewById(R.id.share_file_layout);
+        renameLayout = (LinearLayout) contentView.findViewById(R.id.rename_layout);
         initMultiSelectedMenu();
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
@@ -113,8 +117,8 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     }
 
     private void initMultiSelectedMenu() {
-        String []selectArray=selected.split(",");
-        if(selectArray.length>1){
+        String[] selectArray = selected.split(",");
+        if (selectArray.length > 1) {
             shareLayout.setVisibility(View.GONE);
             renameLayout.setVisibility(View.GONE);
         }
@@ -122,14 +126,14 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        HomeFragment fragment= (HomeFragment) getActivity().getSupportFragmentManager().findFragmentByTag("home");
+        HomeFragment fragment = (HomeFragment) getActivity().getSupportFragmentManager().findFragmentByTag("home");
         switch (view.getId()) {
             case R.id.txt_copy: {
                 this.dismiss();
                 //Toast.makeText(getContext(), R.string.copied, Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
-                bundle.putString("type","copy");
+                bundle.putString("type", "copy");
                 bundle.putString("index", selected);
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
                 dialogFragment.setArguments(bundle);
@@ -160,34 +164,35 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                 this.dismiss();
                 FragmentManager fm = getFragmentManager();
                 Bundle bundle = new Bundle();
-                bundle.putString("type","cut");
+                bundle.putString("type", "cut");
                 bundle.putString("tag", "home");
                 bundle.putString("index", selected);
                 PasteDialogFragment dialogFragment = new PasteDialogFragment();
+                dialogFragment.setPasteHandler(this);
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(fm, "paste fragment");
                 fragment.deSelectHandler.clearAllItems();
                 break;
             }
-            case R.id.txt_send_file:{
+            case R.id.txt_send_file: {
                 this.dismiss();
                 Utils.shareFile(fileNames, selected, activity);
                 fragment.deSelectHandler.clearAllItems();
                 break;
             }
 
-        case R.id.txt_info:{
-            this.dismiss();
-            String selectArray[]=selected.split(",");
-            if(selectArray.length>1){
-                Toast.makeText(activity,getString(R.string.info_error),Toast.LENGTH_LONG).show();
-            }else {
-                NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(), this, 2, activity, selected, "");
-            }
-            fragment.deSelectHandler.clearAllItems();
+            case R.id.txt_info: {
+                this.dismiss();
+                String selectArray[] = selected.split(",");
+                if (selectArray.length > 1) {
+                    Toast.makeText(activity, getString(R.string.info_error), Toast.LENGTH_LONG).show();
+                } else {
+                    NewFolderFragment.showDialog(((FragmentActivity) activity).getSupportFragmentManager(), this, 2, activity, selected, "");
+                }
+                fragment.deSelectHandler.clearAllItems();
                 break;
-        }
-            case R.id.txt_add_people:{
+            }
+            case R.id.txt_add_people: {
                 this.dismiss();
                 getFriendsForShareFile(selected.substring(0, selected.length() - 1));
                 fragment.deSelectHandler.clearAllItems();
@@ -195,16 +200,16 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }
             case R.id.txt_zip: {
                 this.dismiss();
-                String extension=fileNames.substring(fileNames.length() - 4);
-                String arrZip[]=fileNames.split(",");
-                if(extension.trim().equals("zip,")) {
-                    if(arrZip.length>1){
-                        Utils.zipFile(selected.substring(0, selected.length() - 1),(FragmentActivity) activity, "home");
-                    }else {
-                        Utils.unZipFile(selected.substring(0, selected.length() - 1), (FragmentActivity)activity, "home");
+                String extension = fileNames.substring(fileNames.length() - 4);
+                String arrZip[] = fileNames.split(",");
+                if (extension.trim().equals("zip,")) {
+                    if (arrZip.length > 1) {
+                        Utils.zipFile(selected.substring(0, selected.length() - 1), (FragmentActivity) activity, "home");
+                    } else {
+                        Utils.unZipFile(selected.substring(0, selected.length() - 1), (FragmentActivity) activity, "home");
                     }
-                }else{
-                    Utils.zipFile(selected.substring(0,selected.length()-1), (FragmentActivity)activity,"home");
+                } else {
+                    Utils.zipFile(selected.substring(0, selected.length() - 1), (FragmentActivity) activity, "home");
                 }
                 fragment.deSelectHandler.clearAllItems();
                 break;
@@ -217,7 +222,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
             }
             case R.id.txt_favorite: {
                 this.dismiss();
-            Utils.favoriteFile(selected,(FragmentActivity) activity);
+                Utils.favoriteFile(selected, (FragmentActivity) activity);
                 fragment.deSelectHandler.clearAllItems();
                 break;
             }
@@ -227,7 +232,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
 
     private void renameFile() {
 
-        NewFolderFragment.showDialog(((FragmentActivity)activity).getSupportFragmentManager(),this, 1, activity, selected,"");
+        NewFolderFragment.showDialog(((FragmentActivity) activity).getSupportFragmentManager(), this, 1, activity, selected, fileNames.substring(0, fileNames.length() - 1));
     }
 
     @Override
@@ -247,6 +252,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
     public void getFriendsForShareFile(String fileIdClicked) {
         if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
@@ -261,7 +267,7 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                             /*progress_bar.setVisibility(View.GONE);*/
                             if (e == null) {
                                 if (result.Data.size() == 0) {
-                                     Toast.makeText(activity,getString(R.string.no_friend_error),Toast.LENGTH_LONG).show();
+                                    Toast.makeText(activity, getString(R.string.no_friend_error), Toast.LENGTH_LONG).show();
                                 } else {
                                     showContactsToShare(result.Data);
                                 }
@@ -294,12 +300,13 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                     }
                 }
                 if (friendIds.length() > 0)
-                    shareWith("false", "2",selected.substring(0,selected.length()-1), friendIds.substring(0, friendIds.length() - 1));
+                    shareWith("false", "2", selected.substring(0, selected.length() - 1), friendIds.substring(0, friendIds.length() - 1));
                 dialog.cancel();
             }
         });
         user.show();
     }
+
     public void shareWith(String canEdit, String ps, String fileID, String friendIds) {
         if (Utils.isOnline(activity)) {
             /*progress_bar.setVisibility(View.VISIBLE);*/
@@ -308,10 +315,10 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                     .setTimeout(1000000000)
                     .setHeader("userToken", Application.getToken(activity))
                     .setBodyParameter("canEdit", canEdit)
-                    .setBodyParameter("ps",ps)
-                    .setBodyParameter("friendId",friendIds)
-                    .setBodyParameter("fileid",fileID)
-                    .setBodyParameter("shareText","پیغام")
+                    .setBodyParameter("ps", ps)
+                    .setBodyParameter("friendId", friendIds)
+                    .setBodyParameter("fileid", fileID)
+                    .setBodyParameter("shareText", "پیغام")
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
@@ -324,5 +331,11 @@ public class MenuFragment extends BottomSheetDialogFragment implements View.OnCl
                     });
         } else
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPasteDirectory(final String pasteFolder) {
+
+
     }
 }

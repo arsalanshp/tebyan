@@ -24,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.view.ContextMenu;
@@ -69,6 +70,7 @@ import net.tebyan.filesharingapp.model.GetFileModel_;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences prefs;
     AlertDialog alertDialog;
     ImageButton newFolder;
+    public boolean isSecondBack = false;
     MainActivity activity;
     String token;
     ArrayList<Folder> folderList = new ArrayList<>();
@@ -100,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView username_menu;
     TextView phone_menu;
     ImageView profile_menu_pic;
+    public SearchView searchView;
+    public HashMap<String,String> fragmentTitle;
     FloatingActionButton fab;
     FABProgressCircle fabProgress;
     Button notifCount;
@@ -210,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Application.currentActivity=this;
+        initFragmentTitle();
         initNavigation();
         /*typeService=getIntent().getIntExtra("type",-1);*/
         /*if(typeService==1) {
@@ -226,6 +232,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         data = new GetFileModel_();
         forceRTLIfSupported();
         new MyAyncTask().execute();
+    }
+
+    private void initFragmentTitle() {
+        fragmentTitle=new HashMap();
+        fragmentTitle.put("home",getString(R.string.home));
+        fragmentTitle.put("favorite",getString(R.string.favorite));
+        fragmentTitle.put("shareWithMe",getString(R.string.shared));
+        fragmentTitle.put("deleted", getString(R.string.deleted));
+        fragmentTitle.put("search", getString(R.string.search));
     }
 
 
@@ -252,16 +267,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 1)
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+                String name=getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 2).getName();
+                String title=fragmentTitle.get(name);
+                getSupportActionBar().setTitle(title);
                 getSupportFragmentManager().popBackStack();
-            else {
+            }else {
                 HomeFragment homeFragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag("home");
                 if (Application.CurrentFolder != "") {
                     Application.CurrentFolder=Application.ParrentFolder;
-                    homeFragment.getFiles("Title", Application.ParrentFolder);
+                    homeFragment.getFiles("Title", Application.ParrentFolder,0);
                 } else {
-                    super.onBackPressed();
-                    finish();
+                    if (isSecondBack) {
+                        super.onBackPressed();
+                        finish();
+                    }
+                    Toast.makeText(this, R.string.back_exit, Toast.LENGTH_SHORT).show();
+                    isSecondBack = true;
                 }
             }
 
@@ -628,7 +650,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 Toast.makeText(activity, R.string.upload_completed, Toast.LENGTH_SHORT).show();
                                 if(Application.CurrentFolder.equals(Application.UploadFolder)){
                                     HomeFragment fragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("home");
-                                    fragment.getFiles("Title",Application.UploadFolder);
+                                    fragment.getFiles("Title",Application.UploadFolder,0);
                                 }
                             }
                         }
@@ -932,7 +954,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public interface CutConfirm {
-        void cutConfirm(String tag);
+        String cutConfirm(String tag);
     }
 
     public interface DismissPasteDialog {
@@ -951,5 +973,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public interface ShowContextMenu {
         void showContextMenu(String fileIds, String fileNames, int type);
+    }
+    public interface  ShowPasteDirectory{
+        void showPasteDirectory(String pasteFolder);
     }
 }

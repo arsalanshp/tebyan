@@ -39,6 +39,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public String token;
     public String currentFolder;
     public FragmentActivity activity;
+    public MainActivity mainActivity;
     public int type;
     public MainActivity.DismissPasteDialog handler;
     public PasteDialogFragment dialog;
@@ -54,7 +55,6 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
         token = Application.getToken(getActivity());
         return view;
     }
-
     public void setHandler(MainActivity.DismissPasteDialog handler) {
         this.handler = handler;
     }
@@ -62,6 +62,7 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity=(MainActivity)getActivity();
         setHasOptionsMenu(true);
     }
 
@@ -128,6 +129,25 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
                                     adapter.data = data;
                                     adapter.notifyDataSetChanged();
                                     final int finalHeaderPos = headerPos;
+                                    if (result.Data.Navigate.size() == 0 || result.Data.Navigate.get(0).FileID == null) {
+                                        Application.PasteFolder = "";
+                                        /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.home));*/
+                                        Application.PasteParentFolder = null;
+                                    }
+                                    else {
+                                        if (result.Data.Navigate.size() == 1) {
+                                            Application.PasteParentFolder = result.Data.Navigate.get(0).FileID;
+                                            /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);*/
+                                        }if( Application.PasteParentFolder == result.Data.Navigate.get(0).FileID && result.Data.Navigate.size()==1){
+                                            Application.PasteParentFolder="";
+
+                                        }
+                                        if(result.Data.Navigate.size() >1) {
+                                            Application.PasteParentFolder = result.Data.Navigate.get(1).FileID;
+                                            Application.PasteFolder = result.Data.Navigate.get(0).FileID;
+                                            /*((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(result.Data.Navigate.get(0).Title);*/
+                                        }
+                                    }
                                 } else
                                     Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
                             } else
@@ -157,10 +177,16 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     public void pasteConfirm() {
         handler.dismissPasteDialog();
         if (Utils.isOnline(activity)) {
+            if(currentFolder==null){
+                currentFolder="";
+            }
             Ion.with(activity)
-                    .load(WebserviceUrl.CopyFile + selected.substring(0, selected.length() - 1) + WebserviceUrl.FolderId + currentFolder)
-                    .setTimeout(1000000)
-                    .setHeader("userToken", Application.getToken(activity)).asJsonObject()
+                    .load(WebserviceUrl.CopyFile)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .setTimeout(100000)
+                    .setBodyParameter("fileid", selected.substring(0, selected.length() - 1))
+                    .setBodyParameter("folderId", currentFolder)
+                    .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
@@ -178,24 +204,30 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
     }
 
     @Override
-    public void cutConfirm(final String tag) {
+    public String cutConfirm(final String tag) {
         handler.dismissPasteDialog();
+        final String[] pasteStatus = new String[3];
         if (Utils.isOnline(activity)) {
             if(currentFolder==null){
-                currentFolder="";
+                currentFolder=null;
             }
             Ion.with(activity)
-                    .load(WebserviceUrl.MoveFile + selected.substring(0, selected.length() - 1) + WebserviceUrl.FolderId + currentFolder)
-                    .setHeader("userToken", Application.getToken(activity)).asJsonObject()
+                    .load(WebserviceUrl.MoveFile)
+                    .setHeader("userToken", Application.getToken(activity))
+                    .setTimeout(100000)
+                    .setBodyParameter("fileid", selected.substring(0, selected.length() - 1))
+                    .setBodyParameter("folderId", currentFolder).asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
                         @Override
                         public void onCompleted(Exception e, JsonObject result) {
                             if (e == null) {
                                 if (!result.get("Data").toString().equals("null") || result.get("Error").toString().equals("null")) {
                                     if (tag == "home") {
-                                        HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
-                                        fragment.getFiles("Title",currentFolder );
+                                        final HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
+                                        fragment.getFiles("Title", Application.CurrentFolder, type);
+                                        fragment.showSnackBar(currentFolder);
                                     }
+
                                     if (tag == "favorite") {
                                         HomeFragment fragment = (HomeFragment) activity.getSupportFragmentManager().findFragmentByTag(tag);
                                         fragment.getStaredFiles("Title");
@@ -206,12 +238,17 @@ public class PasteFragment extends Fragment implements MainActivity.RefreshDirec
 
                                     }
                                     Toast.makeText(activity, R.string.pasted, Toast.LENGTH_SHORT).show();
+
                                 } else
                                     Toast.makeText(activity, result.get("Error").getAsJsonObject().get("ErrorMessage").toString(), Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     });
-        } else
+            return "";
+        } else {
             Toast.makeText(activity, R.string.network_connection_fail, Toast.LENGTH_SHORT).show();
+            return "";
+        }
     }
 }

@@ -9,7 +9,7 @@ public class WebserviceUrl {
     public static String FileId = "&fileid=";
     public static String ps = "&ps=";
     public static String FolderId = "&folderId=";
-    public static String SiteUrl = "http://file.tebyan.net:81";
+    public static String SiteUrl = "https://file2.tebyan.net";
     public static String SiteUrlHTTPS = "https://file.tebyan.net:81";
     public static String RepositoryServiceUrl = SiteUrl + "/api/Repository/";
     public static String AccountServiceUrl = SiteUrl + "/api/Account/";
@@ -26,8 +26,8 @@ public class WebserviceUrl {
     public static String DeleteFile = RepositoryServiceUrl + "Trash";
     public static String RestoreFile = RepositoryServiceUrl + "Restore";
     public static String RenameFile = RepositoryServiceUrl + "Rename?id=";
-    public static String CopyFile = RepositoryServiceUrl + "Copy?id=";
-    public static String MoveFile = RepositoryServiceUrl + "Move?id=";
+    public static String CopyFile = RepositoryServiceUrl + "Copy";
+    public static String MoveFile = RepositoryServiceUrl + "Move";
     public static String Delete = RepositoryServiceUrl + "Delete";
     public static String UnStar = RepositoryServiceUrl + "UnStar";
     public static String ZipFile = RepositoryServiceUrl + "ZipFile";

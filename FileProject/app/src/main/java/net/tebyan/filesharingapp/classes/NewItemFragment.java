@@ -184,7 +184,7 @@ public abstract class NewItemFragment extends DialogFragment {
 
                     final Button ok = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     // Start disabled
-                    ok.setEnabled(false);
+                    /*ok.setEnabled(false);*/
                     ok.setOnClickListener(new View.OnClickListener() {
 
                         @Override
